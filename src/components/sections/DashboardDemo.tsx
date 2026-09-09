@@ -1,46 +1,42 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from "recharts";
+import { supabase } from "@/lib/supabaseClient";
 
 const revealVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" as const } }
 };
 
-// Mock Datasets
-const dataCashflow = [
-  { month: "Jan", in: 125000, out: 95000 },
-  { month: "Feb", in: 132000, out: 98000 },
-  { month: "Mar", in: 115000, out: 105000 },
-  { month: "Apr", in: 145000, out: 92000 },
-  { month: "May", in: 155000, out: 99000 },
-  { month: "Jun", in: 142000, out: 101000 },
-];
-
-const dataPnL = [
-  { month: "Jan", revenue: 140000, expense: 95000, profit: 45000 },
-  { month: "Feb", revenue: 148000, expense: 98000, profit: 50000 },
-  { month: "Mar", revenue: 130000, expense: 105000, profit: 25000 },
-  { month: "Apr", revenue: 162000, expense: 92000, profit: 70000 },
-  { month: "May", revenue: 175000, expense: 99000, profit: 76000 },
-  { month: "Jun", revenue: 160000, expense: 101000, profit: 59000 },
-];
-
-const dataTax = [
-  { month: "Jan", estimated: 13500, paid: 13500 },
-  { month: "Feb", estimated: 15000, paid: 15000 },
-  { month: "Mar", estimated: 7500, paid: 7500 },
-  { month: "Apr", estimated: 21000, paid: 0 },
-  { month: "May", estimated: 22800, paid: 0 },
-  { month: "Jun", estimated: 17700, paid: 0 },
-];
-
 type TabType = "cashflow" | "pnl" | "tax";
 
 export function DashboardDemo() {
   const [activeTab, setActiveTab] = useState<TabType>("cashflow");
+  const [dataCashflow, setDataCashflow] = useState<any[]>([]);
+  const [dataPnL, setDataPnL] = useState<any[]>([]);
+  const [dataTax, setDataTax] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchMetrics() {
+      const { data, error } = await supabase
+        .from('dashboard_metrics')
+        .select('*')
+        .order('id', { ascending: true });
+
+      if (error) {
+        console.error('Error fetching metrics:', error);
+      } else if (data) {
+        setDataCashflow(data.map(d => ({ month: d.month, in: Number(d.cash_in), out: Number(d.cash_out) })));
+        setDataPnL(data.map(d => ({ month: d.month, revenue: Number(d.revenue), expense: Number(d.expense), profit: Number(d.profit) })));
+        setDataTax(data.map(d => ({ month: d.month, estimated: Number(d.tax_estimated), paid: Number(d.tax_paid) })));
+      }
+      setLoading(false);
+    }
+    fetchMetrics();
+  }, []);
 
   const renderChart = () => {
     switch(activeTab) {
@@ -175,7 +171,13 @@ export function DashboardDemo() {
                 transition={{ duration: 0.3 }}
                 className="w-full h-full"
               >
-                {renderChart()}
+                {loading ? (
+                  <div className="w-full h-full flex items-center justify-center text-[color:var(--muted)]">
+                    Loading dashboard data...
+                  </div>
+                ) : (
+                  renderChart()
+                )}
               </motion.div>
             </AnimatePresence>
           </div>

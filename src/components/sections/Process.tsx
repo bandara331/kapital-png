@@ -9,11 +9,11 @@ const revealVariants = {
 
 export function Process() {
   const steps = [
-    { num: '01', title: 'Discovery & Assessment', desc: 'We review your current bookkeeping, systems, and reporting needs.' },
-    { num: '02', title: 'Setup & Migration', desc: 'We set up or clean up your Xero file, bank feeds, and chart of accounts.' },
-    { num: '03', title: 'Ongoing Bookkeeping', desc: 'Our team maintains your books on a regular cycle that suits your business.' },
-    { num: '04', title: 'Analytics & Reporting', desc: 'We layer AI-aided dashboards and reports on your data for real-time insight.' },
-    { num: '05', title: 'Advisory Check-ins', desc: 'We meet regularly to walk through the numbers and support your decisions.' },
+    { num: '01', title: 'Discovery & Onboarding', desc: 'We review your current systems, set up your secure Client Hub, and align on reporting goals.' },
+    { num: '02', title: 'Seamless Data Capture', desc: 'You simply drag & drop your receipts and documents into your secure dashboard—we handle the rest.' },
+    { num: '03', title: 'Cloud Bookkeeping', desc: 'Our team processes your data, reconciles bank feeds in Xero, and maintains pristine, compliant books.' },
+    { num: '04', title: 'Real-Time Reporting', desc: 'We generate AI-aided dashboards and financial reports, delivered directly to your Client Hub.' },
+    { num: '05', title: 'Digital Advisory', desc: 'We meet via Zoom or Google Meet to walk through the numbers and provide strategic advice.' },
   ];
 
   return (

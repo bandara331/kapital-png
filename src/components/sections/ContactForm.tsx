@@ -41,21 +41,37 @@ export function ContactForm() {
     return isValid;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
 
     setIsSubmitting(true);
 
-    // Simulate API request (e.g. Supabase or Resend)
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || data.error) {
+        throw new Error(data.error || "Failed to send message");
+      }
+
       setIsSuccess(true);
       setFormData({ name: "", email: "", company: "", message: "" });
       
-      // Reset success message after 5 seconds
       setTimeout(() => setIsSuccess(false), 5000);
-    }, 2000);
+    } catch (err: unknown) {
+      console.error(err);
+      // Optional: set a general error state to show the user
+      const errorMessage = err instanceof Error ? err.message : "Something went wrong. Please try again.";
+      alert(errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

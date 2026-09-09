@@ -1,7 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { supabase } from "@/lib/supabaseClient";
+import { useSearchParams } from "next/navigation";
+import { ClientInbox } from "@/components/dashboard/ClientInbox";
 import {
   TrendingUp,
   FileText,
@@ -13,19 +16,14 @@ import {
   ArrowUpRight,
   Clock,
   CheckCircle2,
+  X,
+  Loader2,
 } from "lucide-react";
 
 const stats = [
   { label: "Cash Balance", value: "K 128,460", change: "+12.4%", positive: true, icon: TrendingUp },
   { label: "Reports Ready", value: "3", change: "New this month", positive: true, icon: FileCheck },
   { label: "Docs Pending Review", value: "2", change: "Uploaded by you", positive: null, icon: FileText },
-];
-
-const reports = [
-  { name: "July 2026 Tax Report", date: "Aug 5, 2026", size: "1.2 MB", type: "PDF", status: "Ready", file: "July_Tax_Report.pdf" },
-  { name: "Q2 Profit & Loss Statement", date: "Jul 22, 2026", size: "842 KB", type: "PDF", status: "Ready", file: "Q2_PnL_Statement.pdf" },
-  { name: "June 2026 GST Return", date: "Jul 10, 2026", size: "560 KB", type: "PDF", status: "Ready", file: "June_GST_Return.pdf" },
-  { name: "May 2026 Cashflow Summary", date: "Jun 8, 2026", size: "720 KB", type: "PDF", status: "Archived", file: "May_Cashflow_Summary.pdf" },
 ];
 
 const activity = [
@@ -46,21 +44,135 @@ const cardVariant = {
 export default function DashboardPage() {
   const [isDragging, setIsDragging] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+  
+  const [reports, setReports] = useState<any[]>([]);
+  const [showWelcome, setShowWelcome] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
+  const [userId, setUserId] = useState("");
+  
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    async function loadUserAndReports() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setUserEmail(user.email || "");
+        setUserId(user.id);
+        
+        // Fetch reports
+        const { data: docs } = await supabase
+          .from("documents")
+          .select("*")
+          .eq("client_id", user.id)
+          .eq("status", "Ready")
+          .order("created_at", { ascending: false });
+          
+        if (docs) {
+          setReports(docs);
+        }
+      }
+    }
+    
+    loadUserAndReports();
+
+    if (searchParams.get("welcome") === "true") {
+      setShowWelcome(true);
+      setTimeout(() => setShowWelcome(false), 4000);
+    }
+  }, [searchParams]);
+
+  const handleFileUpload = async (files: File[]) => {
+    if (!userId || files.length === 0) return;
+    setIsUploading(true);
+    
+    try {
+      for (const file of files) {
+        // 1. Upload to storage
+        const filePath = `${userId}/${Date.now()}_${file.name}`;
+        const { error: uploadError } = await supabase.storage
+          .from("client_documents")
+          .upload(filePath, file);
+          
+        if (uploadError) throw uploadError;
+        
+        // 2. Insert into documents table
+        const { error: dbError } = await supabase
+          .from("documents")
+          .insert({
+            client_id: userId,
+            file_name: file.name,
+            file_path: filePath,
+            file_type: file.type || "unknown",
+            file_size: file.size,
+            status: "Pending Review"
+          });
+          
+        if (dbError) throw dbError;
+        
+        setUploadedFiles(prev => [...prev, file.name]);
+      }
+    } catch (error) {
+      console.error("Upload failed:", error);
+      alert("Failed to upload document. Please try again.");
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
-    const files = Array.from(e.dataTransfer.files).map((f) => f.name);
-    setUploadedFiles((prev) => [...prev, ...files]);
+    const files = Array.from(e.dataTransfer.files);
+    handleFileUpload(files);
+  };
+  
+  const handleDownload = async (filePath: string, fileName: string) => {
+    try {
+      const { data, error } = await supabase.storage
+        .from("client_documents")
+        .createSignedUrl(filePath, 60); // 60 seconds expiry
+        
+      if (error) throw error;
+      
+      // Trigger download
+      const link = document.createElement('a');
+      link.href = data.signedUrl;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Download failed:", error);
+      alert("Failed to download document.");
+    }
   };
 
   return (
     <div className="flex-1 overflow-y-auto">
+      {/* Welcome Toast */}
+      <AnimatePresence>
+        {showWelcome && (
+          <motion.div
+            initial={{ opacity: 0, y: -60 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -60 }}
+            className="fixed top-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 bg-[color:var(--color-teal)] text-[color:var(--color-navy-3)] px-5 py-3.5 rounded-2xl shadow-[0_8px_32px_rgba(47,174,147,0.4)] font-semibold text-[14px]"
+          >
+            <CheckCircle2 size={18} />
+            Welcome back! 👋 You're now signed in.
+            <button onClick={() => setShowWelcome(false)} className="ml-2 hover:opacity-70">
+              <X size={14} />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Top Bar */}
       <header className="sticky top-0 z-10 bg-[#08192d]/80 backdrop-blur-md border-b border-white/10 px-6 py-4 flex items-center justify-between">
         <div>
           <h1 className="text-white font-[family-name:var(--font-space-grotesk)] font-bold text-[20px]">Client Portal</h1>
-          <p className="text-white/40 text-[13px]">Welcome back, John 👋</p>
+          <p className="text-white/40 text-[13px]">Welcome back, {userEmail || "Client"} 👋</p>
         </div>
         <button className="relative p-2.5 rounded-full bg-white/5 border border-white/10 text-white/60 hover:text-white hover:bg-white/10 transition-colors">
           <Bell size={18} />
@@ -109,25 +221,36 @@ export default function DashboardPage() {
               <span className="text-[color:var(--color-teal-2)] text-[13px] font-medium cursor-pointer hover:underline">View all</span>
             </div>
             <div className="divide-y divide-white/5">
-              {reports.map((report, i) => (
-                <div key={i} className="flex items-center gap-4 px-6 py-4 hover:bg-white/5 transition-colors group">
-                  <div className="w-9 h-9 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center shrink-0">
-                    <FileText size={16} className="text-red-400" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-white text-[14px] font-medium truncate">{report.name}</p>
-                    <p className="text-white/40 text-[12px] mt-0.5">{report.date} · {report.size}</p>
-                  </div>
-                  <div className="flex items-center gap-3 shrink-0">
-                    <span className={`text-[11px] px-2 py-1 rounded-full font-medium ${report.status === "Ready" ? "bg-[color:var(--color-teal)]/15 text-[color:var(--color-teal-2)]" : "bg-white/5 text-white/40"}`}>
-                      {report.status}
-                    </span>
-                    <button className="w-8 h-8 rounded-lg bg-white/0 group-hover:bg-white/10 border border-transparent group-hover:border-white/10 flex items-center justify-center text-white/40 group-hover:text-white transition-all">
-                      <Download size={14} />
-                    </button>
-                  </div>
+              {reports.length === 0 ? (
+                <div className="px-6 py-8 text-center text-white/40 text-[13px]">
+                  No reports available yet.
                 </div>
-              ))}
+              ) : (
+                reports.map((report) => (
+                  <div key={report.id} className="flex items-center gap-4 px-6 py-4 hover:bg-white/5 transition-colors group">
+                    <div className="w-9 h-9 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center shrink-0">
+                      <FileText size={16} className="text-red-400" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-white text-[14px] font-medium truncate">{report.file_name}</p>
+                      <p className="text-white/40 text-[12px] mt-0.5">
+                        {new Date(report.created_at).toLocaleDateString()} · {(report.file_size / 1024 / 1024).toFixed(2)} MB
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3 shrink-0">
+                      <span className="text-[11px] px-2 py-1 rounded-full font-medium bg-[color:var(--color-teal)]/15 text-[color:var(--color-teal-2)]">
+                        {report.status}
+                      </span>
+                      <button 
+                        onClick={() => handleDownload(report.file_path, report.file_name)}
+                        className="w-8 h-8 rounded-lg bg-white/0 group-hover:bg-white/10 border border-transparent group-hover:border-white/10 flex items-center justify-center text-white/40 group-hover:text-white transition-all hover:text-[color:var(--color-teal-2)]"
+                      >
+                        <Download size={14} />
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </motion.div>
 
@@ -153,18 +276,27 @@ export default function DashboardPage() {
                     isDragging
                       ? "border-[color:var(--color-teal)] bg-[color:var(--color-teal)]/5"
                       : "border-white/10 hover:border-white/20 hover:bg-white/5"
-                  }`}
+                  } ${isUploading ? 'opacity-50 pointer-events-none' : ''}`}
                 >
-                  <UploadCloud size={28} className="text-[color:var(--color-teal-2)] mx-auto mb-2" />
-                  <p className="text-white/70 text-[13px] font-medium">Drag & drop files here</p>
+                  {isUploading ? (
+                    <Loader2 size={28} className="text-[color:var(--color-teal-2)] mx-auto mb-2 animate-spin" />
+                  ) : (
+                    <UploadCloud size={28} className="text-[color:var(--color-teal-2)] mx-auto mb-2" />
+                  )}
+                  <p className="text-white/70 text-[13px] font-medium">
+                    {isUploading ? "Uploading..." : "Drag & drop files here"}
+                  </p>
                   <p className="text-white/30 text-[12px] mt-1">PDF, JPG, PNG up to 20MB</p>
-                  <label className="mt-4 inline-block cursor-pointer text-[13px] font-semibold text-[color:var(--color-teal-2)] hover:text-white border border-[color:var(--color-teal)]/30 hover:border-white/30 rounded-full px-4 py-2 transition-colors">
-                    Browse files
-                    <input type="file" className="hidden" multiple onChange={(e) => {
-                      const names = Array.from(e.target.files || []).map((f) => f.name);
-                      setUploadedFiles((prev) => [...prev, ...names]);
-                    }} />
-                  </label>
+                  
+                  {!isUploading && (
+                    <label className="mt-4 inline-block cursor-pointer text-[13px] font-semibold text-[color:var(--color-teal-2)] hover:text-white border border-[color:var(--color-teal)]/30 hover:border-white/30 rounded-full px-4 py-2 transition-colors">
+                      Browse files
+                      <input type="file" className="hidden" multiple onChange={(e) => {
+                        const files = Array.from(e.target.files || []);
+                        handleFileUpload(files);
+                      }} />
+                    </label>
+                  )}
                 </div>
                 {uploadedFiles.length > 0 && (
                   <div className="mt-4 space-y-2">
@@ -201,6 +333,16 @@ export default function DashboardPage() {
                   </div>
                 ))}
               </div>
+            </motion.div>
+            
+            {/* Real-time Messaging Inbox */}
+            <motion.div
+              custom={6}
+              variants={cardVariant}
+              initial="hidden"
+              animate="visible"
+            >
+              <ClientInbox />
             </motion.div>
           </div>
         </div>

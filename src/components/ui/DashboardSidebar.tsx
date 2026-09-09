@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabaseClient";
 import {
   LayoutDashboard,
   FileText,
@@ -22,6 +24,35 @@ const navItems = [
 
 export function DashboardSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const [userEmail, setUserEmail] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [initials, setInitials] = useState("JD");
+
+  useEffect(() => {
+    async function getUserData() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user?.email) {
+        setUserEmail(user.email);
+        
+        // Fetch client details
+        const { data: clientData } = await supabase
+          .from("clients")
+          .select("company_name")
+          .eq("user_id", user.id)
+          .single();
+          
+        if (clientData?.company_name) {
+          setCompanyName(clientData.company_name);
+          setInitials(clientData.company_name.substring(0, 2).toUpperCase());
+        } else {
+          setCompanyName("Client");
+          setInitials(user.email.substring(0, 2).toUpperCase());
+        }
+      }
+    }
+    getUserData();
+  }, []);
 
   return (
     <aside className="w-[72px] lg:w-[240px] min-h-screen bg-[color:var(--color-navy)] border-r border-white/10 flex flex-col shrink-0">
@@ -63,20 +94,23 @@ export function DashboardSidebar() {
       <div className="px-2 lg:px-4 pb-6 border-t border-white/10 pt-4">
         <div className="flex items-center gap-3 px-3 py-3 rounded-xl mb-1">
           <div className="w-8 h-8 rounded-full bg-[color:var(--color-teal)]/20 border border-[color:var(--color-teal)]/30 flex items-center justify-center shrink-0">
-            <span className="text-[color:var(--color-teal-2)] text-sm font-bold">JD</span>
+            <span className="text-[color:var(--color-teal-2)] text-sm font-bold">{initials}</span>
           </div>
           <div className="hidden lg:block min-w-0">
-            <p className="text-white text-[13px] font-semibold truncate">John Doe</p>
-            <p className="text-white/40 text-[11px] truncate">john@business.com</p>
+            <p className="text-white text-[13px] font-semibold truncate">{companyName || "Client"}</p>
+            <p className="text-white/40 text-[11px] truncate">{userEmail || "Loading..."}</p>
           </div>
         </div>
-        <Link
-          href="/"
-          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/40 hover:text-red-400 hover:bg-red-400/5 transition-colors"
+        <button
+          onClick={async () => {
+            await supabase.auth.signOut();
+            router.push("/");
+          }}
+          className="flex w-full items-center gap-3 px-3 py-2.5 rounded-xl text-white/40 hover:text-red-400 hover:bg-red-400/5 transition-colors"
         >
           <LogOut size={18} className="shrink-0" />
           <span className="hidden lg:block text-[13px] font-medium">Sign out</span>
-        </Link>
+        </button>
       </div>
     </aside>
   );

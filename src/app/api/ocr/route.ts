@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     }
 
     const completion = await groq.chat.completions.create({
-      model: "llama-3.1-8b-instant",
+      model: "qwen/qwen3.8-27b",
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
         { role: "user", content: `Extract data from this receipt:\n\n${receiptText}` },

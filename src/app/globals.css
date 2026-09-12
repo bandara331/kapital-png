@@ -1,55 +1,71 @@
 @import "tailwindcss";
 
 @theme {
-  --color-navy: #0F2C48;
-  --color-navy-2: #163B5C;
-  --color-navy-3: #0B2338;
-  --color-teal: #2FAE93;
-  --color-teal-2: #5FD4B8;
-  --color-paper: #F6F4EF;
-  --color-paper-2: #EFEBE1;
-  --color-ink: #16222E;
-  --color-slate: #5C6B76;
-  --color-gold: #C99A46;
-  --color-line: #E1DCCE;
+  /* Kapital PNG — Salesforce-inspired professional light palette */
+  --color-sf-navy:       #032D60;   /* Deep navy — headings & logo */
+  --color-sf-blue:       #0176D3;   /* Primary CTA blue */
+  --color-sf-blue-mid:   #1B96FF;   /* Hover/accent blue */
+  --color-sf-blue-light: #EEF4FF;   /* Light tinted section bg */
+  --color-sf-blue-pale:  #F3F8FF;   /* Very pale blue for cards */
+  --color-sf-teal:       #06A59A;   /* Teal accent (brand carry-over) */
+  --color-sf-gold:       #C99A46;   /* Gold accent */
+  --color-sf-border:     #E5E7EB;   /* Subtle border */
+  --color-sf-muted:      #54698D;   /* Muted text */
+  --color-sf-dark-bar:   #032D60;   /* Footer dark bottom bar */
+
+  /* Legacy tokens kept for backward compat with dark-mode components */
+  --color-navy:    #032D60;
+  --color-navy-2:  #0B3B6B;
+  --color-navy-3:  #021F45;
+  --color-teal:    #06A59A;
+  --color-teal-2:  #1B96FF;
+  --color-paper:   #FFFFFF;
+  --color-paper-2: #F3F8FF;
+  --color-ink:     #032D60;
+  --color-slate:   #54698D;
+  --color-gold:    #C99A46;
+  --color-line:    #E5E7EB;
   --color-line-dark: rgba(255, 255, 255, 0.14);
 
-  --font-inter: var(--font-inter);
+  --font-inter:         var(--font-inter);
   --font-space-grotesk: var(--font-space-grotesk);
   --font-ibm-plex-mono: var(--font-ibm-plex-mono);
 }
 
 @layer base {
   :root {
-    --background: var(--color-paper);
-    --foreground: var(--color-ink);
-    --card: #ffffff;
-    --card-foreground: var(--color-ink);
-    --border: var(--color-line);
-    --muted: var(--color-slate);
-    --muted-foreground: #a1a1aa;
-    --primary: var(--color-teal);
-    --primary-foreground: var(--color-navy-3);
-    --secondary: var(--color-navy);
-    --secondary-foreground: #ffffff;
-    --accent: var(--color-teal-2);
-    --accent-foreground: var(--color-navy-3);
+    /* === LIGHT MODE — Salesforce clean white === */
+    --background:            #FFFFFF;
+    --foreground:            #032D60;
+    --card:                  #FFFFFF;
+    --card-foreground:       #032D60;
+    --border:                #E5E7EB;
+    --muted:                 #54698D;
+    --muted-foreground:      #706E6B;
+    --primary:               #0176D3;
+    --primary-foreground:    #FFFFFF;
+    --secondary:             #EEF4FF;
+    --secondary-foreground:  #032D60;
+    --accent:                #1B96FF;
+    --accent-foreground:     #FFFFFF;
+    --section-alt:           #F3F8FF;
   }
 
   .dark {
-    --background: var(--color-navy-3);
-    --foreground: #ffffff;
-    --card: var(--color-navy);
-    --card-foreground: #ffffff;
-    --border: var(--color-line-dark);
-    --muted: #94a3b8;
-    --muted-foreground: #64748b;
-    --primary: var(--color-teal-2);
-    --primary-foreground: var(--color-navy-3);
-    --secondary: #1e293b;
-    --secondary-foreground: #ffffff;
-    --accent: var(--color-teal);
-    --accent-foreground: #ffffff;
+    --background:            #021F45;
+    --foreground:            #FFFFFF;
+    --card:                  #032D60;
+    --card-foreground:       #FFFFFF;
+    --border:                rgba(255,255,255,0.14);
+    --muted:                 #94a3b8;
+    --muted-foreground:      #64748b;
+    --primary:               #1B96FF;
+    --primary-foreground:    #021F45;
+    --secondary:             #0B3B6B;
+    --secondary-foreground:  #FFFFFF;
+    --accent:                #06A59A;
+    --accent-foreground:     #FFFFFF;
+    --section-alt:           #032D60;
   }
 }
 
@@ -64,6 +80,10 @@
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-space-grotesk);
     letter-spacing: -0.01em;
+    color: var(--color-sf-navy);
+  }
+  .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+    color: #FFFFFF;
   }
 }
 
@@ -73,5 +93,30 @@
   }
   .wrap {
     @apply max-w-[1180px] mx-auto px-6 md:px-8;
+  }
+  /* Salesforce wave divider */
+  .sf-wave {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+  }
+  /* Salesforce-style pill badge */
+  .sf-badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-[12px] font-medium bg-[color:var(--secondary)] text-[color:var(--primary)] border border-[color:var(--primary)]/20;
+  }
+  /* Primary blue button */
+  .sf-btn-primary {
+    @apply inline-flex items-center gap-2 font-[family-name:var(--font-space-grotesk)] font-semibold text-[14.5px] px-6 py-3 rounded-full bg-[color:var(--primary)] text-white hover:bg-[color:var(--accent)] transition-all duration-200 hover:-translate-y-[1px] hover:shadow-[0_6px_20px_rgba(1,118,211,0.35)];
+  }
+  /* Ghost outlined button */
+  .sf-btn-ghost {
+    @apply inline-flex items-center gap-2 font-[family-name:var(--font-space-grotesk)] font-semibold text-[14.5px] px-6 py-3 rounded-full border border-[color:var(--primary)] text-[color:var(--primary)] hover:bg-[color:var(--secondary)] transition-all duration-200;
+  }
+  /* Section label */
+  .sf-label {
+    @apply inline-flex items-center gap-2 font-mono text-[12px] tracking-[0.12em] uppercase text-[color:var(--primary)] mb-4;
   }
 }

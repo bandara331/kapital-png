@@ -18,6 +18,8 @@ import {
   CheckCircle2,
   X,
   Loader2,
+  Video,
+  Calendar
 } from "lucide-react";
 
 const stats = [
@@ -50,6 +52,7 @@ export default function DashboardPage() {
   const [showWelcome, setShowWelcome] = useState(false);
   const [userEmail, setUserEmail] = useState("");
   const [userId, setUserId] = useState("");
+  const [meetings, setMeetings] = useState<any[]>([]);
   
   const searchParams = useSearchParams();
 
@@ -70,6 +73,18 @@ export default function DashboardPage() {
           
         if (docs) {
           setReports(docs);
+        }
+
+        // Fetch client meetings
+        const { data: meetingsData } = await supabase
+          .from("client_meetings")
+          .select("*")
+          .eq("client_id", user.id)
+          .eq("status", "Scheduled")
+          .order("meeting_date", { ascending: true });
+          
+        if (meetingsData) {
+          setMeetings(meetingsData);
         }
       }
     }
@@ -174,10 +189,12 @@ export default function DashboardPage() {
           <h1 className="text-white font-[family-name:var(--font-space-grotesk)] font-bold text-[20px]">Client Portal</h1>
           <p className="text-white/40 text-[13px]">Welcome back, {userEmail || "Client"} 👋</p>
         </div>
-        <button className="relative p-2.5 rounded-full bg-white/5 border border-white/10 text-white/60 hover:text-white hover:bg-white/10 transition-colors">
-          <Bell size={18} />
-          <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[color:var(--color-teal)] ring-2 ring-[#08192d]"></span>
-        </button>
+        <div className="flex items-center gap-3">
+          <button className="relative p-2.5 rounded-full bg-white/5 border border-white/10 text-white/60 hover:text-white hover:bg-white/10 transition-colors">
+            <Bell size={18} />
+            <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[color:var(--color-teal)] ring-2 ring-[#08192d]"></span>
+          </button>
+        </div>
       </header>
 
       <div className="p-6 md:p-8 space-y-8">
@@ -256,6 +273,53 @@ export default function DashboardPage() {
 
           {/* Right Column */}
           <div className="flex flex-col gap-6">
+            
+            {/* Upcoming Meetings Widget */}
+            <motion.div
+              custom={4}
+              variants={cardVariant}
+              initial="hidden"
+              animate="visible"
+              className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden"
+            >
+              <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between">
+                <h2 className="text-white font-[family-name:var(--font-space-grotesk)] font-semibold text-[16px] flex items-center gap-2">
+                  <Calendar size={18} className="text-blue-400" />
+                  Upcoming Meetings
+                </h2>
+              </div>
+              <div className="divide-y divide-white/5">
+                {meetings.length === 0 ? (
+                  <div className="px-6 py-8 text-center text-white/40 text-[13px]">
+                    No upcoming meetings scheduled.
+                  </div>
+                ) : (
+                  meetings.map((meeting) => (
+                    <div key={meeting.id} className="p-5 hover:bg-white/5 transition-colors">
+                      <div className="flex items-start justify-between gap-4 mb-3">
+                        <div>
+                          <h3 className="text-white font-medium text-[15px]">{meeting.title}</h3>
+                          <p className="text-white/50 text-[13px] mt-1 flex items-center gap-1.5">
+                            <Clock size={14} />
+                            {new Date(meeting.meeting_date).toLocaleString([], { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                          </p>
+                        </div>
+                      </div>
+                      <a 
+                        href={meeting.meeting_link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 text-white py-2.5 rounded-xl text-[13.5px] font-semibold shadow-lg shadow-blue-500/20 transition-colors"
+                      >
+                        <Video size={16} />
+                        Join Meeting
+                      </a>
+                    </div>
+                  ))
+                )}
+              </div>
+            </motion.div>
+
             {/* Upload Zone */}
             <motion.div
               custom={4}

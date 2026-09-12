@@ -49,8 +49,8 @@ export function DocumentVault() {
       }));
 
       setDocuments(enhancedDocs);
-    } catch (err) {
-      console.error("Error fetching documents:", err);
+    } catch (err: any) {
+      console.error("Error fetching documents:", err?.message || err);
     } finally {
       setLoading(false);
     }

@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Send, CheckCircle2, Loader2, Mail, MapPin, Phone } from "lucide-react";
+import { Send, CheckCircle2, Loader2, Mail, MapPin, Phone, AlertCircle } from "lucide-react";
+import { supabase } from "@/lib/supabaseClient";
 
 const revealVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -14,6 +15,14 @@ export function ContactForm() {
   const [errors, setErrors] = useState({ name: "", email: "", message: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [session, setSession] = useState<any>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => setSession(session));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => setSession(s));
+    return () => { subscription.unsubscribe(); };
+  }, []);
 
   const validate = () => {
     let isValid = true;
@@ -43,6 +52,13 @@ export function ContactForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setAuthError(null);
+
+    if (!session) {
+      setAuthError("You must log in first to send a message.");
+      return;
+    }
+
     if (!validate()) return;
 
     setIsSubmitting(true);
@@ -164,6 +180,13 @@ export function ContactForm() {
               </p>
             </motion.div>
           ) : null}
+
+          {authError && (
+            <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 flex items-start gap-3">
+              <AlertCircle size={20} className="text-red-400 shrink-0 mt-0.5" />
+              <p className="text-[14px] text-red-200">{authError}</p>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-[20px] relative z-10">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-[20px]">

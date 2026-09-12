@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowDown, Check, Zap, Target, Shield, Clock } from "lucide-react";
 import Link from "next/link";
@@ -134,6 +134,26 @@ const serviceData = {
 export function Services() {
   const [activeService, setActiveService] = useState<ServiceId>(null);
 
+  useEffect(() => {
+    const handleHash = () => {
+      const hash = window.location.hash.replace("#", "");
+      if (["bookkeeping", "analytics", "setup", "advisory"].includes(hash)) {
+        setActiveService(hash as ServiceId);
+        // Scroll to the opened details panel after a tiny delay for it to render
+        setTimeout(() => {
+          document.getElementById('service-details')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 200);
+      }
+    };
+    
+    // Check on initial load
+    handleHash();
+
+    // Listen for hash changes (e.g., when clicking dropdown links on the same page)
+    window.addEventListener('hashchange', handleHash);
+    return () => window.removeEventListener('hashchange', handleHash);
+  }, []);
+
   const toggleService = (id: ServiceId) => {
     setActiveService(activeService === id ? null : id);
     if (activeService !== id) {
@@ -176,6 +196,7 @@ export function Services() {
           ].map((service) => (
             <motion.button 
               key={service.id}
+              id={service.id}
               onClick={() => toggleService(service.id as ServiceId)}
               variants={revealVariants}
               initial="hidden"
@@ -219,30 +240,30 @@ export function Services() {
               transition={{ duration: 0.5, ease: "easeInOut" }}
               className="overflow-hidden"
             >
-              <div className="bg-gradient-to-b from-[color:var(--color-teal)]/10 to-transparent border border-[color:var(--color-teal)]/20 rounded-[24px] p-8 md:p-12 relative overflow-hidden backdrop-blur-sm">
+              <div className="bg-[#F3F8FF] dark:bg-[#032D60] border border-[#E5E7EB] dark:border-white/10 rounded-[24px] p-8 md:p-12 relative overflow-hidden">
                 
                 <div className="text-center max-w-2xl mx-auto mb-16">
-                  <h3 className="text-[clamp(32px,4vw,48px)] font-bold font-[family-name:var(--font-space-grotesk)] text-white mb-4">
+                  <h3 className="text-[clamp(32px,4vw,48px)] font-bold font-[family-name:var(--font-space-grotesk)] text-[#032D60] dark:text-white mb-4">
                     {serviceData[activeService].title}
                   </h3>
-                  <p className="text-lg text-white/60">
+                  <p className="text-[16px] text-[#54698D] dark:text-white/70">
                     {serviceData[activeService].subtitle}
                   </p>
                 </div>
 
                 {/* Workflow Timeline */}
                 <div className="mb-20">
-                  <h4 className="text-sm font-mono text-[color:var(--color-teal)] tracking-widest uppercase mb-8 text-center">How We Execute</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
-                    <div className="hidden md:block absolute top-8 left-[10%] right-[10%] h-[1px] bg-[color:var(--color-teal)]/20 border-t border-dashed border-[color:var(--color-teal)]/40" />
+                  <h4 className="text-[12px] font-mono text-[#0176D3] tracking-[0.12em] uppercase mb-10 text-center font-semibold">How We Execute</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+                    <div className="hidden md:block absolute top-8 left-[15%] right-[15%] h-[1px] bg-[#E5E7EB] dark:bg-white/10 border-t border-dashed border-[#0176D3]/30" />
                     
                     {serviceData[activeService].process.map((step, i) => (
-                      <div key={i} className="relative z-10 bg-[color:var(--card)] border border-[color:var(--border)] rounded-2xl p-6 text-center">
-                        <div className="w-16 h-16 rounded-full bg-[color:var(--color-navy)] border-2 border-[color:var(--color-teal)] flex items-center justify-center mx-auto mb-6 text-xl font-bold font-mono text-[color:var(--color-teal)] shadow-[0_0_20px_rgba(28,142,118,0.2)]">
+                      <div key={i} className="relative z-10 bg-white dark:bg-[#021F45] border border-[#E5E7EB] dark:border-white/10 rounded-2xl p-8 text-center shadow-sm hover:shadow-md transition-shadow">
+                        <div className="w-16 h-16 rounded-full bg-[#EEF4FF] dark:bg-[#0176D3]/20 border-2 border-[#0176D3] flex items-center justify-center mx-auto mb-6 text-[18px] font-bold font-mono text-[#0176D3]">
                           {step.step}
                         </div>
-                        <h5 className="text-lg font-bold text-white mb-2">{step.title}</h5>
-                        <p className="text-sm text-white/50">{step.desc}</p>
+                        <h5 className="text-[18px] font-bold text-[#032D60] dark:text-white mb-3">{step.title}</h5>
+                        <p className="text-[14px] text-[#54698D] dark:text-white/60 leading-relaxed">{step.desc}</p>
                       </div>
                     ))}
                   </div>
@@ -250,35 +271,37 @@ export function Services() {
 
                 {/* Pricing Tiers */}
                 <div>
-                  <h4 className="text-sm font-mono text-[color:var(--color-teal)] tracking-widest uppercase mb-8 text-center">Transparent Pricing</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <h4 className="text-[12px] font-mono text-[#0176D3] tracking-[0.12em] uppercase mb-10 text-center font-semibold">Transparent Pricing</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch">
                     {serviceData[activeService].tiers.map((tier, i) => (
-                      <div key={i} className={`bg-[color:var(--card)] border rounded-2xl p-8 flex flex-col relative ${
-                        tier.popular ? "border-[color:var(--color-teal)] shadow-[0_8px_30px_rgba(28,142,118,0.15)]" : "border-[color:var(--border)]"
+                      <div key={i} className={`bg-white dark:bg-[#021F45] rounded-3xl p-8 flex flex-col relative transition-all duration-300 ${
+                        tier.popular 
+                          ? "border-2 border-[#0176D3] shadow-[0_16px_40px_rgba(1,118,211,0.12)] md:-mt-4 md:mb-4" 
+                          : "border border-[#E5E7EB] dark:border-white/10"
                       }`}>
                         {tier.popular && (
-                          <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[color:var(--color-teal)] text-[color:var(--color-navy)] text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                          <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[#0176D3] text-white text-[11px] font-bold px-4 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
                             Most Popular
                           </div>
                         )}
-                        <h5 className="text-xl font-semibold text-white mb-2">{tier.name}</h5>
-                        <div className="text-3xl font-bold font-[family-name:var(--font-space-grotesk)] text-white mb-6">
+                        <h5 className="text-[18px] font-semibold text-[#032D60] dark:text-white mb-2">{tier.name}</h5>
+                        <div className="text-[32px] font-bold font-[family-name:var(--font-space-grotesk)] text-[#032D60] dark:text-white mb-8">
                           {tier.price}
                         </div>
-                        <ul className="space-y-4 mb-8 flex-1">
+                        <ul className="space-y-4 mb-10 flex-1">
                           {tier.features.map((feat, j) => (
-                            <li key={j} className="flex gap-3 text-sm text-white/70">
-                              <Check size={16} className="text-[color:var(--color-teal)] shrink-0 mt-0.5" />
+                            <li key={j} className="flex gap-3 text-[14.5px] text-[#54698D] dark:text-white/70 leading-snug">
+                              <Check size={18} className="text-[#0176D3] shrink-0" />
                               {feat}
                             </li>
                           ))}
                         </ul>
                         <Link 
                           href="/#contact"
-                          className={`w-full py-3 rounded-xl font-semibold text-sm transition-colors flex items-center justify-center ${
+                          className={`w-full py-3.5 rounded-full font-[family-name:var(--font-space-grotesk)] font-semibold text-[14.5px] transition-all duration-200 flex items-center justify-center ${
                             tier.popular 
-                              ? "bg-[color:var(--color-teal)] text-[color:var(--color-navy)] hover:bg-[color:var(--color-teal-2)]" 
-                              : "bg-white/5 text-white hover:bg-white/10"
+                              ? "bg-[#0176D3] text-white hover:bg-[#1B96FF] hover:-translate-y-[1px] hover:shadow-[0_6px_20px_rgba(1,118,211,0.35)]" 
+                              : "bg-[#EEF4FF] dark:bg-white/5 text-[#0176D3] dark:text-white hover:bg-[#0176D3] hover:text-white"
                           }`}
                         >
                           Select Plan

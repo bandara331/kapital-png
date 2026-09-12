@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
         <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f8fafc; padding: 40px; border-radius: 16px; border: 1px solid #e2e8f0;">
           
           <div style="text-align: center; margin-bottom: 30px;">
-            <h1 style="color: #08192d; margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.5px;">Kapital <span style="color: #2FAEA3;">PNG</span></h1>
+            <h1 style="color: #08192d; margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.5px;">Kapital <span style="color: #0176D3;">PNG</span></h1>
             <p style="color: #64748b; font-size: 14px; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px;">Cloud Bookkeeping & Advisory</p>
           </div>
 
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
               Our expert team in Port Moresby is already reviewing your inquiry. We pride ourselves on fast communication and will be in touch with you shortly to discuss how we can elevate your financial operations.
             </p>
 
-            <div style="background-color: #f1f5f9; border-left: 4px solid #2FAEA3; padding: 20px; margin: 25px 0; border-radius: 0 8px 8px 0;">
+            <div style="background-color: #f1f5f9; border-left: 4px solid #0176D3; padding: 20px; margin: 25px 0; border-radius: 0 8px 8px 0;">
               <p style="color: #64748b; font-size: 13px; margin-top: 0; margin-bottom: 8px; text-transform: uppercase; font-weight: 600;">Your Message to Us:</p>
               <p style="color: #334155; font-size: 15px; margin: 0; font-style: italic;">
                 "${message.replace(/\n/g, "<br />")}"

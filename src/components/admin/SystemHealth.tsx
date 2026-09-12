@@ -27,11 +27,12 @@ export function SystemHealth() {
       setDbLatency(-1);
     }
 
-    // 2. Check Storage
-    const { error: storageError } = await supabase.storage.getBucket('client_documents');
+    // 2. Check Storage (use list instead of getBucket to avoid permission issues)
+    const { error: storageError } = await supabase.storage.from('client_documents').list(undefined, { limit: 1 });
     if (!storageError) {
       setStorageStatus("Operational");
     } else {
+      console.error("Storage Health Error:", storageError);
       setStorageStatus("Error");
     }
   };
@@ -49,7 +50,7 @@ export function SystemHealth() {
     {
       name: "Client Storage Bucket",
       status: storageStatus,
-      metric: "Connected",
+      metric: storageStatus === "Operational" ? "Connected" : "Disconnected",
       icon: Cloud,
       color: "text-blue-400",
       bg: "bg-blue-400/10",
@@ -66,12 +67,14 @@ export function SystemHealth() {
     }
   ];
 
+  const allHealthy = systems.every(sys => sys.isHealthy);
+
   return (
     <div className="bg-[color:var(--card)] border border-[color:var(--border)] rounded-2xl p-6 h-full flex flex-col">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-lg font-[family-name:var(--font-space-grotesk)] font-semibold text-white">System Health</h2>
-        <div className="text-xs px-2.5 py-1 rounded-full bg-green-500/10 text-green-400 font-medium">
-          All Systems Go
+        <div className={`text-xs px-2.5 py-1 rounded-full font-medium ${allHealthy ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>
+          {allHealthy ? "All Systems Go" : "System Issues"}
         </div>
       </div>
       

@@ -1,5 +1,6 @@
 import { About } from "@/components/sections/About";
 import { MissionVision } from "@/components/sections/MissionVision";
+import { ClientImpressions } from "@/components/sections/ClientImpressions";
 import { WhyUs } from "@/components/sections/WhyUs";
 import type { Metadata } from "next";
 
@@ -13,6 +14,7 @@ export default function AboutPage() {
     <main className="flex flex-col min-h-screen">
       <About />
       <MissionVision />
+      <ClientImpressions />
       <WhyUs />
     </main>
   );

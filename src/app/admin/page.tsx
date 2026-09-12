@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { motion, AnimatePresence } from "framer-motion";
-import { Building, Mail, Clock, MoreVertical, Ban, ShieldCheck, Activity, Send, X, Loader2 } from "lucide-react";
+import { Building, Mail, Clock, MoreVertical, Ban, ShieldCheck, Activity, Send, X, Loader2, Video } from "lucide-react";
 import { AnalyticsCards } from "@/components/admin/AnalyticsCards";
 import { ActivityFeed } from "@/components/admin/ActivityFeed";
 import { SystemHealth } from "@/components/admin/SystemHealth";
@@ -20,6 +20,14 @@ export default function AdminDashboardPage() {
   const [emailSubject, setEmailSubject] = useState("");
   const [emailMessage, setEmailMessage] = useState("");
   const [isSendingEmail, setIsSendingEmail] = useState(false);
+
+  // Advanced Meeting Scheduler State
+  const [selectedClientForMeeting, setSelectedClientForMeeting] = useState<any | null>(null);
+  const [meetingTitle, setMeetingTitle] = useState("");
+  const [meetingDate, setMeetingDate] = useState("");
+  const [meetingTime, setMeetingTime] = useState("");
+  const [meetingLink, setMeetingLink] = useState("");
+  const [isSavingMeeting, setIsSavingMeeting] = useState(false);
 
   useEffect(() => {
     async function fetchClients() {
@@ -98,6 +106,41 @@ export default function AdminDashboardPage() {
       alert("Error sending email. Please try again.");
     } finally {
       setIsSendingEmail(false);
+    }
+  };
+
+  const handleSaveMeetingLink = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedClientForMeeting || !meetingTitle || !meetingDate || !meetingTime || !meetingLink) return;
+
+    setIsSavingMeeting(true);
+    try {
+      // Combine date and time into a single timestamp string
+      const dateTimeString = `${meetingDate}T${meetingTime}:00`;
+      
+      const { error } = await supabase
+        .from("client_meetings")
+        .insert({
+          client_id: selectedClientForMeeting.id,
+          title: meetingTitle,
+          meeting_date: dateTimeString,
+          meeting_link: meetingLink,
+          status: 'Scheduled'
+        });
+
+      if (error) throw error;
+      
+      alert("Meeting scheduled successfully!");
+      setSelectedClientForMeeting(null);
+      setMeetingLink("");
+      setMeetingTitle("");
+      setMeetingDate("");
+      setMeetingTime("");
+    } catch (err) {
+      console.error(err);
+      alert("Error scheduling meeting.");
+    } finally {
+      setIsSavingMeeting(false);
     }
   };
 
@@ -209,6 +252,19 @@ export default function AdminDashboardPage() {
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <button 
+                          onClick={() => {
+                            setSelectedClientForMeeting(client);
+                            setMeetingTitle("Monthly Sync");
+                            setMeetingLink("");
+                            setMeetingDate("");
+                            setMeetingTime("");
+                          }}
+                          className="px-3 py-1.5 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 text-xs font-semibold rounded-md transition-colors flex items-center gap-1.5"
+                        >
+                          <Video size={14} />
+                          Schedule Meeting
+                        </button>
+                        <button 
                           onClick={() => setSelectedClientForEmail(client)}
                           className="px-3 py-1.5 bg-[color:var(--color-teal)]/10 text-[color:var(--color-teal-2)] hover:bg-[color:var(--color-teal)]/20 text-xs font-semibold rounded-md transition-colors flex items-center gap-1.5"
                         >
@@ -307,6 +363,108 @@ export default function AdminDashboardPage() {
                       <>
                         <Send size={16} />
                         Send Email
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Meeting Link Composer Modal */}
+      <AnimatePresence>
+        {selectedClientForMeeting && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="w-full max-w-lg bg-[color:var(--color-navy)] border border-white/10 rounded-2xl shadow-2xl overflow-hidden"
+            >
+              <div className="flex items-center justify-between p-6 border-b border-white/10 bg-white/5">
+                <h3 className="text-lg font-bold text-white font-[family-name:var(--font-space-grotesk)] flex items-center gap-2">
+                  <Video size={18} className="text-blue-400" />
+                  Schedule Meeting with {selectedClientForMeeting.company_name}
+                </h3>
+                <button 
+                  onClick={() => setSelectedClientForMeeting(null)}
+                  className="text-white/40 hover:text-white transition-colors p-1"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+              
+              <form onSubmit={handleSaveMeetingLink} className="p-6 space-y-5">
+                <div>
+                  <label className="text-sm font-medium text-white/80 block mb-2">Meeting Title</label>
+                  <input
+                    required
+                    type="text"
+                    value={meetingTitle}
+                    onChange={(e) => setMeetingTitle(e.target.value)}
+                    placeholder="e.g. Q3 Financial Review"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-blue-500 transition-colors"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm font-medium text-white/80 block mb-2">Date</label>
+                    <input
+                      required
+                      type="date"
+                      value={meetingDate}
+                      onChange={(e) => setMeetingDate(e.target.value)}
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-blue-500 transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-white/80 block mb-2">Time</label>
+                    <input
+                      required
+                      type="time"
+                      value={meetingTime}
+                      onChange={(e) => setMeetingTime(e.target.value)}
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-blue-500 transition-colors"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium text-white/80 block mb-2">Zoom / Teams URL</label>
+                  <input
+                    required
+                    type="url"
+                    value={meetingLink}
+                    onChange={(e) => setMeetingLink(e.target.value)}
+                    placeholder="https://zoom.us/j/123456789"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-blue-500 transition-colors"
+                  />
+                </div>
+
+                <div className="flex justify-end gap-3 pt-2">
+                  <button 
+                    type="button"
+                    onClick={() => setSelectedClientForMeeting(null)}
+                    className="px-5 py-2.5 text-sm font-medium text-white/60 hover:text-white hover:bg-white/5 rounded-xl transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="submit"
+                    disabled={isSavingMeeting}
+                    className="flex items-center gap-2 px-5 py-2.5 bg-blue-500 text-white text-sm font-bold rounded-xl hover:bg-blue-600 disabled:opacity-50 transition-colors"
+                  >
+                    {isSavingMeeting ? (
+                      <>
+                        <Loader2 size={16} className="animate-spin" />
+                        Saving...
+                      </>
+                    ) : (
+                      <>
+                        Schedule Meeting
                       </>
                     )}
                   </button>

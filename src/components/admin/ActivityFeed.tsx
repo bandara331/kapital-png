@@ -50,7 +50,7 @@ export function ActivityFeed() {
 
       // Map Clients
       if (clientsData) {
-        clientsData.forEach(c => allEvents.push({
+        clientsData.forEach((c: any) => allEvents.push({
           id: `client-${c.id}`,
           type: "registration",
           title: "New Client Registered",
@@ -64,7 +64,7 @@ export function ActivityFeed() {
 
       // Map Documents
       if (docsData) {
-        docsData.forEach(d => allEvents.push({
+        docsData.forEach((d: any) => allEvents.push({
           id: `doc-${d.id}`,
           type: "upload",
           title: "Document Uploaded",
@@ -78,7 +78,7 @@ export function ActivityFeed() {
 
       // Map Messages
       if (msgsData) {
-        msgsData.forEach(m => allEvents.push({
+        msgsData.forEach((m: any) => allEvents.push({
           id: `msg-${m.id}`,
           type: "message",
           title: m.is_from_admin ? "Reply Sent" : "Message Received",

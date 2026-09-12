@@ -11,6 +11,7 @@ type UploadedFile = {
   status: "uploading" | "done" | "error";
   errorMsg?: string;
   id?: string;
+  admin_reply?: string;
 };
 
 export default function UploadPage() {
@@ -19,7 +20,7 @@ export default function UploadPage() {
   const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session } }: any) => {
       if (session?.user) {
         setUserId(session.user.id);
         fetchExistingDocuments(session.user.id);
@@ -35,7 +36,7 @@ export default function UploadPage() {
       .order("created_at", { ascending: false });
 
     if (!error && data) {
-      const existingFiles = data.map((doc) => ({
+      const existingFiles = data.map((doc: any) => ({
         id: doc.id,
         name: doc.file_name,
         size: (doc.file_size / 1024 / 1024).toFixed(2) + " MB",

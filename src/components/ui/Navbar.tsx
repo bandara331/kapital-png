@@ -39,8 +39,8 @@ export function Navbar() {
 
   useEffect(() => {
     setMounted(true);
-    supabase.auth.getSession().then(({ data: { session } }) => setSession(session));
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => setSession(s));
+    supabase.auth.getSession().then(({ data: { session } }: any) => setSession(session));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e: any, s: any) => setSession(s));
     const onScroll = () => {
       setScrolled(window.scrollY > 10);
       if (mobileOpen) setMobileOpen(false);

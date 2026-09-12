@@ -29,9 +29,9 @@ export function DashboardDemo() {
       if (error) {
         console.error('Error fetching metrics:', error);
       } else if (data) {
-        setDataCashflow(data.map(d => ({ month: d.month, in: Number(d.cash_in), out: Number(d.cash_out) })));
-        setDataPnL(data.map(d => ({ month: d.month, revenue: Number(d.revenue), expense: Number(d.expense), profit: Number(d.profit) })));
-        setDataTax(data.map(d => ({ month: d.month, estimated: Number(d.tax_estimated), paid: Number(d.tax_paid) })));
+        setDataCashflow(data.map((d: any) => ({ month: d.month, in: Number(d.cash_in), out: Number(d.cash_out) })));
+        setDataPnL(data.map((d: any) => ({ month: d.month, revenue: Number(d.revenue), expense: Number(d.expense), profit: Number(d.profit) })));
+        setDataTax(data.map((d: any) => ({ month: d.month, estimated: Number(d.tax_estimated), paid: Number(d.tax_paid) })));
       }
       setLoading(false);
     }

@@ -41,9 +41,9 @@ export function DocumentVault() {
 
       // Fetch clients to match names
       const { data: clientsData } = await supabase.from("clients").select("id, company_name");
-      const clientMap = new Map(clientsData?.map(c => [c.id, c.company_name]) || []);
+      const clientMap = new Map(clientsData?.map((c: any) => [c.id, c.company_name]) || []);
 
-      const enhancedDocs = (docsData || []).map(doc => ({
+      const enhancedDocs = (docsData || []).map((doc: any) => ({
         ...doc,
         clientName: clientMap.get(doc.client_id) || "Unknown Client"
       }));

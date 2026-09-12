@@ -32,7 +32,7 @@ export function AdminInbox() {
       const { data: clientsData } = await supabase.from("clients").select("id, company_name, email");
       if (clientsData && isMounted) {
         const cMap: ClientMap = {};
-        clientsData.forEach(c => { cMap[c.id] = c; });
+        clientsData.forEach((c: any) => { cMap[c.id] = c; });
         setClients(cMap);
       }
 
@@ -55,7 +55,7 @@ export function AdminInbox() {
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'messages' },
-        (payload) => {
+        (payload: any) => {
           setMessages((prev) => [...prev, payload.new as Message]);
         }
       )

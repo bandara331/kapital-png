@@ -24,7 +24,7 @@ function Counter({ to, suffix = "" }: { to: number; suffix?: string }) {
   return <span ref={ref}>{count}{suffix}</span>;
 }
 
-const card = {
+const card: any = {
   hidden: { opacity: 0, y: 28 },
   visible: (d: number) => ({ opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut", delay: d } }),
 };

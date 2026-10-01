@@ -6,14 +6,22 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Mail, Video, Settings, Loader2, Send,
   Users, Calendar, Phone, MessageSquare, CheckCircle2,
+  Star, XCircle, ThumbsUp,
 } from "lucide-react";
 
 type Client = { id: string; company_name: string; email: string; created_at: string };
+type Review = { id: string; name: string; role: string | null; company: string | null; quote: string; rating: number; approved: boolean; created_at: string };
 
 export default function AdminDashboardPage() {
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"meetings" | "email" | "settings">("meetings");
+  const [activeTab, setActiveTab] = useState<"meetings" | "email" | "reviews" | "settings">("meetings");
+
+  // Reviews state
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviewsLoading, setReviewsLoading] = useState(true);
+  const [approvingId, setApprovingId] = useState<string | null>(null);
+  const [rejectingId, setRejectingId] = useState<string | null>(null);
 
   // Meeting state
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
@@ -52,7 +60,74 @@ export default function AdminDashboardPage() {
       setLoading(false);
     }
     load();
+
+    // Fetch pending reviews
+    async function loadReviews() {
+      const { data } = await supabase
+        .from("reviews")
+        .select("*")
+        .eq("approved", false)
+        .order("created_at", { ascending: false });
+      setReviews(data || []);
+      setReviewsLoading(false);
+    }
+    loadReviews();
+
+    // Subscribe to new reviews
+    const reviewsSub = supabase
+      .channel('public:reviews')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'reviews' }, (payload) => {
+        setReviews(prev => [payload.new as Review, ...prev]);
+      })
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'reviews' }, (payload) => {
+        // Remove from pending list if approved
+        if (payload.new.approved) {
+          setReviews(prev => prev.filter(r => r.id !== payload.new.id));
+        }
+      })
+      .subscribe();
+
+    // Subscribe to new clients
+    const clientsSub = supabase
+      .channel('public:clients')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'clients' }, (payload) => {
+        if (payload.eventType === 'INSERT') {
+          setClients(prev => [payload.new as Client, ...prev]);
+        }
+      })
+      .subscribe();
+
+    // Subscribe to settings updates
+    const settingsSub = supabase
+      .channel('public:admin_settings')
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'admin_settings' }, (payload) => {
+        setNotifyEmail(payload.new.admin_email || "");
+        setWhatsappNumber(payload.new.whatsapp_number || "");
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(clientsSub);
+      supabase.removeChannel(settingsSub);
+      supabase.removeChannel(reviewsSub);
+    };
   }, []);
+
+  const handleApproveReview = async (id: string) => {
+    setApprovingId(id);
+    const { error } = await supabase.from("reviews").update({ approved: true }).eq("id", id);
+    if (error) { alert("Error approving review: " + error.message); }
+    else { setReviews(prev => prev.filter(r => r.id !== id)); }
+    setApprovingId(null);
+  };
+
+  const handleRejectReview = async (id: string) => {
+    setRejectingId(id);
+    const { error } = await supabase.from("reviews").delete().eq("id", id);
+    if (error) { alert("Error rejecting review: " + error.message); }
+    else { setReviews(prev => prev.filter(r => r.id !== id)); }
+    setRejectingId(null);
+  };
 
   const handleSaveMeeting = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -111,13 +186,13 @@ export default function AdminDashboardPage() {
     try {
       const { error } = await supabase
         .from("admin_settings")
-        .update({ admin_email: notifyEmail, whatsapp_number: whatsappNumber, updated_at: new Date().toISOString() })
-        .eq("id", 1);
+        .upsert({ id: 1, admin_email: notifyEmail, whatsapp_number: whatsappNumber, updated_at: new Date().toISOString() });
       if (error) throw error;
       setSettingsSaved(true);
       setTimeout(() => setSettingsSaved(false), 3000);
-    } catch {
-      alert("Error saving settings.");
+    } catch (err: any) {
+      console.error("Settings save error:", err);
+      alert(`Error saving settings: ${err.message || "Unknown error"}`);
     } finally {
       setIsSavingSettings(false);
     }
@@ -126,6 +201,7 @@ export default function AdminDashboardPage() {
   const tabs = [
     { id: "meetings", label: "Schedule Meeting", icon: <Video size={16} /> },
     { id: "email",    label: "Send Email",       icon: <Mail size={16} /> },
+    { id: "reviews",  label: "Reviews",          icon: <Star size={16} />, badge: reviews.length || null },
     { id: "settings", label: "Settings",         icon: <Settings size={16} /> },
   ] as const;
 
@@ -149,7 +225,7 @@ export default function AdminDashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
           { icon: <Users size={20} />, label: "Registered Clients", value: loading ? "—" : clients.length.toString() },
-          { icon: <Calendar size={20} />, label: "Meeting Types", value: "Zoom · Meet · Teams · WhatsApp" },
+          { icon: <Star size={20} />, label: "Pending Reviews", value: reviewsLoading ? "—" : reviews.length.toString() },
           { icon: <MessageSquare size={20} />, label: "Quick Actions", value: "Schedule · Email · Settings" },
         ].map((s) => (
           <div key={s.label} className="bg-white shadow-sm border border-[#1D4266]/10 rounded-2xl p-5 flex items-start gap-4">
@@ -170,7 +246,7 @@ export default function AdminDashboardPage() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-[13.5px] font-semibold transition-all duration-200 ${
+            className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-[13.5px] font-semibold transition-all duration-200 relative ${
               activeTab === tab.id
                 ? "bg-[color:var(--color-teal)] text-[color:var(--color-navy-3)] shadow"
                 : "text-[#1D4266]/50 hover:text-[#1D4266]"
@@ -178,11 +254,82 @@ export default function AdminDashboardPage() {
           >
             {tab.icon}
             {tab.label}
+            {'badge' in tab && tab.badge ? (
+              <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center font-bold">
+                {tab.badge > 9 ? '9+' : tab.badge}
+              </span>
+            ) : null}
           </button>
         ))}
       </div>
 
       <AnimatePresence mode="wait">
+        {/* ── REVIEWS TAB ── */}
+        {activeTab === "reviews" && (
+          <motion.div key="reviews" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
+            className="bg-white shadow-sm border border-[#1D4266]/10 rounded-2xl p-6 space-y-5">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-bold text-[#1D4266] font-[family-name:var(--font-space-grotesk)]">Pending Reviews</h2>
+              <span className="text-[13px] text-[#1D4266]/40 font-mono">{reviews.length} awaiting approval</span>
+            </div>
+
+            {reviewsLoading ? (
+              <div className="text-[#1D4266]/30 text-sm flex items-center gap-2"><Loader2 size={14} className="animate-spin" /> Loading reviews...</div>
+            ) : reviews.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center mx-auto mb-3">
+                  <ThumbsUp size={22} className="text-green-500" />
+                </div>
+                <p className="text-[#1D4266]/50 text-sm">All caught up! No pending reviews.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {reviews.map((review) => (
+                  <div key={review.id} className="border border-[#1D4266]/10 rounded-xl p-5 space-y-3">
+                    {/* Stars */}
+                    <div className="flex gap-0.5">
+                      {[1,2,3,4,5].map(i => (
+                        <Star key={i} size={14} className={i <= review.rating ? "fill-yellow-400 text-yellow-400" : "text-[#1D4266]/15 fill-transparent"} />
+                      ))}
+                    </div>
+                    {/* Quote */}
+                    <p className="text-[#1D4266]/80 text-[14.5px] leading-relaxed italic">&ldquo;{review.quote}&rdquo;</p>
+                    {/* Author */}
+                    <div className="flex items-center justify-between flex-wrap gap-3">
+                      <div>
+                        <p className="text-[14px] font-semibold text-[#1D4266]">{review.name}</p>
+                        {(review.role || review.company) && (
+                          <p className="text-[12px] text-[#1D4266]/50 font-mono">{[review.role, review.company].filter(Boolean).join(" · ")}</p>
+                        )}
+                        <p className="text-[11px] text-[#1D4266]/30 mt-0.5">{new Date(review.created_at).toLocaleDateString("en-PG", { day: "numeric", month: "short", year: "numeric" })}</p>
+                      </div>
+                      {/* Action buttons */}
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleRejectReview(review.id)}
+                          disabled={rejectingId === review.id || approvingId === review.id}
+                          className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-red-200 text-red-500 text-[13px] font-semibold hover:bg-red-50 disabled:opacity-40 transition-colors"
+                        >
+                          {rejectingId === review.id ? <Loader2 size={13} className="animate-spin" /> : <XCircle size={14} />}
+                          Reject
+                        </button>
+                        <button
+                          onClick={() => handleApproveReview(review.id)}
+                          disabled={approvingId === review.id || rejectingId === review.id}
+                          className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[color:var(--color-teal)] text-[color:var(--color-navy-3)] text-[13px] font-semibold hover:bg-[color:var(--color-teal-2)] disabled:opacity-40 transition-colors"
+                        >
+                          {approvingId === review.id ? <Loader2 size={13} className="animate-spin" /> : <CheckCircle2 size={14} />}
+                          Approve & Publish
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </motion.div>
+        )}
+
         {/* ── SCHEDULE MEETING TAB ── */}
         {activeTab === "meetings" && (
           <motion.div key="meetings" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}

@@ -17,12 +17,17 @@ export function ContactForm() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [session, setSession] = useState<any>(null);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     supabase.auth.getSession().then(({ data: { session } }: any) => setSession(session));
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e: any, s: any) => setSession(s));
     return () => { subscription.unsubscribe(); };
   }, []);
+
+  // Don't render anything until auth state is known, and hide entirely from visitors
+  if (!mounted || !session) return null;
 
   const validate = () => {
     let isValid = true;

@@ -50,6 +50,14 @@ export function Navbar() {
 
   const handleSignOut = async () => { await supabase.auth.signOut(); window.location.href = "/"; };
 
+  const handleGetStarted = () => {
+    if (session) {
+      openModal();
+    } else {
+      window.location.href = "/register";
+    }
+  };
+
   return (
     <>
       {/* ── Sticky wrapper ── */}
@@ -182,7 +190,7 @@ export function Navbar() {
 
               {/* Primary CTA */}
               <button
-                onClick={openModal}
+                onClick={handleGetStarted}
                 className="hidden sm:inline-flex items-center gap-2 font-[family-name:var(--font-space-grotesk)] font-semibold text-[13px] px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#3ECDB0] to-[#2CB99E] text-white transition-all duration-300 hover:shadow-[0_0_24px_rgba(62,205,176,0.5)] hover:-translate-y-[1px] relative overflow-hidden group"
               >
                 <span className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors duration-300 rounded-xl" />
@@ -291,7 +299,7 @@ export function Navbar() {
               {/* CTA */}
               <div className="px-6 py-5 border-t border-white/8 shrink-0">
                 <button
-                  onClick={() => { openModal(); setMobileOpen(false); }}
+                  onClick={() => { handleGetStarted(); setMobileOpen(false); }}
                   className="w-full font-[family-name:var(--font-space-grotesk)] font-semibold text-[15px] py-3.5 rounded-xl bg-gradient-to-r from-[#3ECDB0] to-[#2CB99E] text-white hover:shadow-[0_0_24px_rgba(62,205,176,0.45)] transition-all duration-300"
                 >
                   Get started

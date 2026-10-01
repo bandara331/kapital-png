@@ -2,13 +2,17 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowDown, Check, Zap, Target, Shield, Clock, FileCheck, LineChart, Settings2, Compass } from "lucide-react";
+import { ArrowDown, Check, Zap, FileCheck, LineChart, Settings2, Compass, X, LogIn, UserPlus, Lock } from "lucide-react";
 import Link from "next/link";
+import { supabase } from "@/lib/supabaseClient";
+import { createPortal } from "react-dom";
+import { useBookingModal } from "@/context/BookingModalContext";
 
 const revealVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" as const } }
 };
+
 
 type ServiceId = "bookkeeping" | "analytics" | "setup" | "advisory" | null;
 
@@ -131,44 +135,172 @@ const serviceData = {
   }
 };
 
+// ── Login Required Modal ──
+function LoginRequiredModal({ onClose }: { onClose: () => void }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+  if (!mounted) return null;
+
+  return createPortal(
+    <div
+      style={{
+        position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+        zIndex: 999999, display: "flex", alignItems: "center",
+        justifyContent: "center", padding: "16px",
+        backgroundColor: "rgba(13,31,53,0.7)",
+      }}
+    >
+      {/* Backdrop */}
+      <div onClick={onClose} style={{ position: "absolute", inset: 0 }} />
+
+      {/* Modal card */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.92, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.92, y: 20 }}
+        transition={{ duration: 0.25, ease: "easeOut" }}
+        style={{
+          position: "relative", zIndex: 1000000, width: "100%",
+          maxWidth: "420px", backgroundColor: "#ffffff",
+          borderRadius: "24px", boxShadow: "0 30px 80px rgba(0,0,0,0.3)",
+          overflow: "hidden",
+        }}
+      >
+        {/* Top accent bar */}
+        <div style={{ height: "4px", background: "linear-gradient(90deg, #3ECDB0, #2CB99E)" }} />
+
+        <div style={{ padding: "32px" }}>
+          {/* Close */}
+          <button
+            onClick={onClose}
+            style={{
+              position: "absolute", top: "16px", right: "16px",
+              background: "#f1f5f9", border: "none", borderRadius: "50%",
+              width: "32px", height: "32px", display: "flex",
+              alignItems: "center", justifyContent: "center",
+              cursor: "pointer", color: "#64748b",
+            }}
+          >
+            <X size={16} />
+          </button>
+
+          {/* Icon */}
+          <div style={{
+            width: "60px", height: "60px", borderRadius: "50%",
+            background: "linear-gradient(135deg, #1D4266, #244E79)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            marginBottom: "20px",
+            boxShadow: "0 8px 24px rgba(29,66,102,0.2)",
+          }}>
+            <Lock size={26} color="#3ECDB0" />
+          </div>
+
+          <h2 style={{
+            margin: "0 0 8px", fontSize: "22px", fontWeight: 700,
+            color: "#1D4266", fontFamily: "var(--font-space-grotesk, sans-serif)",
+          }}>
+            Login required
+          </h2>
+          <p style={{ margin: "0 0 28px", fontSize: "14px", color: "#5A7A9C", lineHeight: 1.6 }}>
+            You need an account to select a plan and get started with Kapital PNG. It&apos;s free and takes less than a minute.
+          </p>
+
+          {/* CTA buttons */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            <Link
+              href="/login"
+              style={{
+                display: "flex", alignItems: "center", justifyContent: "center",
+                gap: "8px", padding: "13px", borderRadius: "12px",
+                background: "linear-gradient(135deg, #3ECDB0, #2CB99E)",
+                color: "#ffffff", fontWeight: 700, fontSize: "15px",
+                textDecoration: "none",
+                boxShadow: "0 8px 20px rgba(62,205,176,0.3)",
+              }}
+            >
+              <LogIn size={18} />
+              Sign In
+            </Link>
+            <Link
+              href="/register"
+              style={{
+                display: "flex", alignItems: "center", justifyContent: "center",
+                gap: "8px", padding: "13px", borderRadius: "12px",
+                border: "2px solid #e2e8f0", background: "#ffffff",
+                color: "#1D4266", fontWeight: 600, fontSize: "14px",
+                textDecoration: "none",
+              }}
+            >
+              <UserPlus size={17} />
+              Create a free account
+            </Link>
+          </div>
+
+          <p style={{ textAlign: "center", marginTop: "18px", fontSize: "12px", color: "#94a3b8" }}>
+            No credit card required &nbsp;·&nbsp; Free to join
+          </p>
+        </div>
+      </motion.div>
+    </div>,
+    document.body
+  );
+}
+
 export function Services() {
   const [activeService, setActiveService] = useState<ServiceId>(null);
+  const [session, setSession] = useState<any>(null);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const { openModal } = useBookingModal();
 
   useEffect(() => {
+    // Auth state
+    supabase.auth.getSession().then(({ data: { session } }: any) => setSession(session));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e: any, s: any) => setSession(s));
+
+    // Hash routing
     const handleHash = () => {
       const hash = window.location.hash.replace("#", "");
       if (["bookkeeping", "analytics", "setup", "advisory"].includes(hash)) {
         setActiveService(hash as ServiceId);
-        // Scroll to the opened details panel after a tiny delay for it to render
         setTimeout(() => {
-          document.getElementById('service-details')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          document.getElementById("service-details")?.scrollIntoView({ behavior: "smooth", block: "center" });
         }, 200);
       }
     };
-    
-    // Check on initial load
     handleHash();
-
-    // Listen for hash changes (e.g., when clicking dropdown links on the same page)
-    window.addEventListener('hashchange', handleHash);
-    return () => window.removeEventListener('hashchange', handleHash);
+    window.addEventListener("hashchange", handleHash);
+    return () => { subscription.unsubscribe(); window.removeEventListener("hashchange", handleHash); };
   }, []);
 
   const toggleService = (id: ServiceId) => {
     setActiveService(activeService === id ? null : id);
     if (activeService !== id) {
       setTimeout(() => {
-        document.getElementById('service-details')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        document.getElementById("service-details")?.scrollIntoView({ behavior: "smooth", block: "start" });
       }, 100);
+    }
+  };
+
+  const handleSelectPlan = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!session) {
+      setShowLoginModal(true);
+    } else {
+      openModal();
     }
   };
 
   return (
     <section id="services" className="py-16 md:py-14 flex-1 relative bg-[#F0F5F9]">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[800px] bg-[#3ECDB0]/10 rounded-full blur-[120px] pointer-events-none -z-10" />
-      
+
+      {/* Login Required Modal */}
+      <AnimatePresence>
+        {showLoginModal && <LoginRequiredModal onClose={() => setShowLoginModal(false)} />}
+      </AnimatePresence>
+
       <div className="wrap">
-        <motion.div 
+        <motion.div
           variants={revealVariants}
           initial="hidden"
           whileInView="visible"
@@ -185,8 +317,8 @@ export function Services() {
             Click on any service below to explore our practical pricing tiers and step-by-step implementation process.
           </p>
         </motion.div>
-        
-        {/* Service Cards Grid - Premium Redesign */}
+
+        {/* Service Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
           {[
             { id: "bookkeeping", num: "01", title: "Bookkeeping", desc: "Automated & Accurate", icon: <FileCheck size={28} /> },
@@ -194,7 +326,7 @@ export function Services() {
             { id: "setup", num: "03", title: "System Setup", desc: "Seamless Migration", icon: <Settings2 size={28} /> },
             { id: "advisory", num: "04", title: "Advisory", desc: "Strategic CFO Guidance", icon: <Compass size={28} /> },
           ].map((service) => (
-            <motion.button 
+            <motion.button
               key={service.id}
               id={service.id}
               onClick={() => toggleService(service.id as ServiceId)}
@@ -203,31 +335,24 @@ export function Services() {
               whileInView="visible"
               viewport={{ once: true, amount: 0.15 }}
               className={`text-left border rounded-[20px] p-5 transition-all duration-500 relative overflow-hidden group min-h-[160px] flex flex-col justify-between ${
-                activeService === service.id 
-                  ? "bg-white border-[#3ECDB0] shadow-[0_8px_30px_rgba(62,205,176,0.15)] -translate-y-1" 
+                activeService === service.id
+                  ? "bg-white border-[#3ECDB0] shadow-[0_8px_30px_rgba(62,205,176,0.15)] -translate-y-1"
                   : "bg-white border-[#1D4266]/10 hover:bg-[#F8FAFC] hover:border-[#3ECDB0]/40 hover:-translate-y-0.5"
               }`}
             >
-              {/* Subtle hover gradient */}
               <div className="absolute inset-0 bg-gradient-to-br from-[#3ECDB0]/0 to-[#3ECDB0]/0 group-hover:from-[#3ECDB0]/5 transition-all duration-500" />
-              
-              {/* Top Section */}
               <div className="relative z-10 flex items-start justify-between w-full">
-                {/* Number Badge */}
                 <span className={`font-mono text-[11px] tracking-[0.14em] px-3 py-1 rounded-full border transition-colors ${
                   activeService === service.id ? "bg-[#3ECDB0]/20 border-[#3ECDB0]/30 text-[#3ECDB0]" : "bg-[#1D4266]/5 border-[#1D4266]/10 text-[#1D4266]/40 group-hover:bg-[#3ECDB0]/10 group-hover:text-[#3ECDB0] group-hover:border-[#3ECDB0]/20"
                 }`}>
                   {service.num}
                 </span>
-
-                {/* Arrow Icon */}
                 <div className={`transition-all duration-500 ${
                   activeService === service.id ? "rotate-180 text-[#3ECDB0]" : "text-[#1D4266]/20 group-hover:text-[#3ECDB0] group-hover:translate-y-1"
                 }`}>
                   <ArrowDown size={20} />
                 </div>
               </div>
-
               <div className="relative z-10 mt-6">
                 <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-5 transition-colors shadow-inner ${
                   activeService === service.id ? "bg-[#3ECDB0] text-white" : "bg-white text-[#3ECDB0] group-hover:bg-[#3ECDB0]/10 border border-[#1D4266]/10 group-hover:border-[#3ECDB0]/20"
@@ -252,7 +377,7 @@ export function Services() {
         {/* Dynamic Expansion Panel */}
         <AnimatePresence mode="wait">
           {activeService && (
-            <motion.div 
+            <motion.div
               id="service-details"
               key={activeService}
               initial={{ opacity: 0, height: 0, marginTop: 0 }}
@@ -262,7 +387,6 @@ export function Services() {
               className="overflow-hidden"
             >
               <div className="bg-white border border-[#1D4266]/10 rounded-[24px] p-8 md:p-12 relative overflow-hidden shadow-sm">
-                
                 <div className="text-center max-w-2xl mx-auto mb-16">
                   <h3 className="text-[clamp(32px,4vw,48px)] font-bold font-[family-name:var(--font-space-grotesk)] text-[#1D4266] mb-4">
                     {serviceData[activeService].title}
@@ -277,7 +401,6 @@ export function Services() {
                   <h4 className="text-[12px] font-mono text-[#3ECDB0] tracking-[0.12em] uppercase mb-10 text-center font-semibold">How We Execute</h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
                     <div className="hidden md:block absolute top-8 left-[15%] right-[15%] h-[1px] bg-[#1D4266]/10 border-t border-dashed border-[#3ECDB0]/30" />
-                    
                     {serviceData[activeService].process.map((step, i) => (
                       <div key={i} className="relative z-10 bg-[#F8FAFC] border border-[#1D4266]/10 rounded-2xl p-8 text-center shadow-sm hover:shadow-md transition-shadow">
                         <div className="w-16 h-16 rounded-full bg-[#E8FAF7] border-2 border-[#3ECDB0] flex items-center justify-center mx-auto mb-6 text-[18px] font-bold font-mono text-[#3ECDB0]">
@@ -296,8 +419,8 @@ export function Services() {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch">
                     {serviceData[activeService].tiers.map((tier, i) => (
                       <div key={i} className={`bg-[#F8FAFC] rounded-3xl p-8 flex flex-col relative transition-all duration-300 ${
-                        tier.popular 
-                          ? "border-2 border-[#3ECDB0] shadow-[0_16px_40px_rgba(62,205,176,0.12)] md:-mt-4 md:mb-4 bg-white" 
+                        tier.popular
+                          ? "border-2 border-[#3ECDB0] shadow-[0_16px_40px_rgba(62,205,176,0.12)] md:-mt-4 md:mb-4 bg-white"
                           : "border border-[#1D4266]/10"
                       }`}>
                         {tier.popular && (
@@ -317,26 +440,27 @@ export function Services() {
                             </li>
                           ))}
                         </ul>
-                        <Link 
+                        {/* Select Plan button — checks auth */}
+                        <Link
                           href="/#contact"
-                          className={`w-full py-3.5 rounded-full font-[family-name:var(--font-space-grotesk)] font-semibold text-[14.5px] transition-all duration-200 flex items-center justify-center ${
-                            tier.popular 
-                              ? "bg-[#3ECDB0] text-white hover:bg-[#2FBEA1] hover:-translate-y-[1px] hover:shadow-[0_6px_20px_rgba(62,205,176,0.35)]" 
+                          onClick={handleSelectPlan}
+                          className={`w-full py-3.5 rounded-full font-[family-name:var(--font-space-grotesk)] font-semibold text-[14.5px] transition-all duration-200 flex items-center justify-center gap-2 ${
+                            tier.popular
+                              ? "bg-[#3ECDB0] text-white hover:bg-[#2FBEA1] hover:-translate-y-[1px] hover:shadow-[0_6px_20px_rgba(62,205,176,0.35)]"
                               : "bg-[#E8FAF7] text-[#3ECDB0] hover:bg-[#3ECDB0] hover:text-white"
                           }`}
                         >
+                          {!session && <Lock size={14} />}
                           Select Plan
                         </Link>
                       </div>
                     ))}
                   </div>
                 </div>
-
               </div>
             </motion.div>
           )}
         </AnimatePresence>
-
       </div>
     </section>
   );

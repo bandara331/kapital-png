@@ -3,6 +3,9 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabaseClient";
 
 const Player = dynamic(
   () => import("@lottiefiles/react-lottie-player").then((m) => m.Player),
@@ -10,6 +13,7 @@ const Player = dynamic(
 );
 import { useBookingModal } from "@/context/BookingModalContext";
 import { ArrowRight, BarChart3, CloudLightning, ShieldCheck, TrendingUp } from "lucide-react";
+
 
 const stats = [
   { value: "100+", label: "PNG Businesses" },
@@ -27,6 +31,22 @@ const featurePills = [
 
 export function Hero() {
   const { openModal } = useBookingModal();
+  const router = useRouter();
+  const [session, setSession] = useState<any>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }: any) => setSession(session));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e: any, s: any) => setSession(s));
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleGetStarted = () => {
+    if (session) {
+      openModal();
+    } else {
+      router.push("/register");
+    }
+  };
 
   return (
     <section className="relative bg-[#F0F5F9] overflow-hidden min-h-[75vh] flex flex-col">
@@ -117,7 +137,7 @@ export function Hero() {
                 className="flex gap-3 flex-wrap"
               >
                 <button
-                  onClick={openModal}
+                  onClick={handleGetStarted}
                   className="inline-flex items-center gap-2 font-[family-name:var(--font-space-grotesk)] font-semibold text-[14.5px] px-7 py-3.5 rounded-full bg-[#3ECDB0] text-white hover:bg-[#2FBEA1] transition-all duration-200 hover:-translate-y-[2px] hover:shadow-[0_12px_32px_rgba(62,205,176,0.45)]"
                 >
                   Get started for free <ArrowRight size={16} />

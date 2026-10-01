@@ -17,10 +17,47 @@ const stagger: Variants = {
   visible: { transition: { staggerChildren: 0.1 } },
 };
 
+const cards = [
+  {
+    label: "Our Mission",
+    title: "Decisions made on real numbers, not guesswork.",
+    body: `To empower Papua New Guinea businesses, including SMEs, with accurate, real-time, cloud-based financial information and advanced insight — so owners can make faster, better-informed decisions and spend less time chasing spreadsheets.`,
+    highlight: "advanced insight",
+    tags: ["Real-time Books", "Xero", "Analytics"],
+    img: "/api/image/mission",
+    imgAlt: "Business owner reviewing finances on a laptop",
+    icon: <Target size={20} />,
+    accentColor: "#3ECDB0",
+    iconBg: "rgba(62,205,176,0.2)",
+    tagBg: "rgba(62,205,176,0.12)",
+    tagBorder: "rgba(62,205,176,0.3)",
+    tagColor: "#2CBFA3",
+    fadeColor: "#ffffff",
+    delay: 0.05,
+  },
+  {
+    label: "Our Vision",
+    title: "PNG's leading cloud bookkeeping partner.",
+    body: `To be Papua New Guinea's leading cloud bookkeeping and financial analytics partner — recognised for making modern accounting technology accessible, affordable, and genuinely useful for local businesses.`,
+    highlight: "",
+    tags: ["Partner", "Affordable", "Accessible"],
+    img: "/api/image/vision",
+    imgAlt: "Aerial view of a growing city representing ambition",
+    icon: <Eye size={20} />,
+    accentColor: "#D4A84B",
+    iconBg: "rgba(212,168,75,0.18)",
+    tagBg: "rgba(62,205,176,0.10)",
+    tagBorder: "rgba(62,205,176,0.28)",
+    tagColor: "#2CBFA3",
+    fadeColor: "#ffffff",
+    delay: 0.15,
+  },
+];
+
 export function MissionVision() {
   return (
     <section className="py-16 relative overflow-hidden bg-[#F0F5F9]">
-      {/* Background decoration */}
+      {/* Background glow */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[600px] bg-[color:var(--color-teal)]/5 rounded-full blur-[120px]" />
       </div>
@@ -45,7 +82,7 @@ export function MissionVision() {
           </h2>
         </motion.div>
 
-        {/* Mission + Vision cards side by side */}
+        {/* Cards */}
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -53,102 +90,99 @@ export function MissionVision() {
           variants={stagger}
           className="grid grid-cols-1 md:grid-cols-2 gap-6"
         >
-          {/* Mission card */}
-          <motion.div
-            variants={fadeUp}
-            custom={0.05}
-            className="group relative bg-[#F8FAFC] border border-[#1D4266]/10 text-[#1D4266] rounded-[20px] p-10 overflow-hidden
-                       hover:shadow-[0_20px_60px_rgba(47,174,147,0.18)] hover:border-[#3ECDB0]/40 transition-all duration-500"
-          >
-            {/* Glow blob */}
-            <div className="absolute -top-12 -right-12 w-48 h-48 bg-[#3ECDB0]/15 rounded-full blur-3xl group-hover:bg-[#3ECDB0]/25 transition-colors duration-700" />
-
-            {/* Lottie animation */}
-            <div className="w-full h-48 mb-6 relative rounded-2xl overflow-hidden bg-[#3ECDB0]/5 flex items-center justify-center">
-              <div className="w-24 h-24 rounded-3xl bg-[#3ECDB0]/15 border border-[#3ECDB0]/25 flex items-center justify-center">
-                <Target size={44} className="text-[#3ECDB0]" />
+          {cards.map((card) => (
+            <motion.div
+              key={card.label}
+              variants={fadeUp}
+              custom={card.delay}
+              className="group relative bg-white rounded-[22px] overflow-hidden border border-[#1D4266]/10 hover:border-[#3ECDB0]/40 hover:shadow-[0_20px_60px_rgba(47,174,147,0.15)] transition-all duration-500"
+            >
+              {/* ── Image area with bottom fade ── */}
+              <div className="relative w-full h-52 overflow-hidden">
+                <img
+                  src={card.img}
+                  alt={card.imgAlt}
+                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                />
+                {/* Gradient fade from image into white card body */}
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background: `linear-gradient(
+                      to bottom,
+                      transparent 0%,
+                      transparent 40%,
+                      rgba(255,255,255,0.55) 65%,
+                      rgba(255,255,255,0.92) 80%,
+                      #ffffff 100%
+                    )`,
+                  }}
+                />
+                {/* Icon + label badge overlaid at bottom of image */}
+                <div className="absolute bottom-4 left-5 flex items-center gap-3">
+                  <div
+                    className="w-10 h-10 rounded-xl flex items-center justify-center shadow-md backdrop-blur-sm"
+                    style={{ background: card.iconBg, color: card.accentColor, border: `1.5px solid ${card.accentColor}33` }}
+                  >
+                    {card.icon}
+                  </div>
+                  <span
+                    className="font-mono text-[11px] tracking-[0.14em] uppercase font-semibold px-3 py-1 rounded-full backdrop-blur-sm"
+                    style={{ color: card.accentColor, background: `${card.accentColor}18`, border: `1px solid ${card.accentColor}30` }}
+                  >
+                    {card.label}
+                  </span>
+                </div>
               </div>
-            </div>
 
-            {/* Icon */}
-            <div className="w-12 h-12 rounded-2xl bg-[#3ECDB0]/20 flex items-center justify-center mb-8 relative">
-              <Target size={22} className="text-[#3ECDB0]" />
-            </div>
+              {/* ── Card body ── */}
+              <div className="px-7 pb-7 pt-1">
+                <h3 className="text-[clamp(18px,2vw,23px)] font-semibold font-[family-name:var(--font-space-grotesk)] text-[#1D4266] leading-[1.25] mb-4">
+                  {card.title}
+                </h3>
 
-            <span className="block font-mono text-[11.5px] tracking-[0.14em] uppercase text-[#3ECDB0] mb-3 relative">
-              Our Mission
-            </span>
+                <p className="text-[#1D4266]/65 text-[15px] leading-relaxed mb-6">
+                  {card.highlight
+                    ? card.body.split(card.highlight).map((part, i, arr) =>
+                        i < arr.length - 1 ? (
+                          <span key={i}>
+                            {part}
+                            <span style={{ color: card.accentColor }} className="font-semibold">
+                              {card.highlight}
+                            </span>
+                          </span>
+                        ) : (
+                          <span key={i}>{part}</span>
+                        )
+                      )
+                    : card.body}
+                </p>
 
-            <h3 className="text-[clamp(20px,2.2vw,26px)] font-semibold font-[family-name:var(--font-space-grotesk)] leading-[1.2] mb-5 relative">
-              Decisions made on real numbers, not guesswork.
-            </h3>
-
-            <p className="text-[#1D4266]/70 text-[15.5px] leading-relaxed relative">
-              To empower Papua New Guinea businesses, including SMEs, with
-              accurate, real-time, cloud-based financial information and{" "}
-              <span className="text-[#3ECDB0] font-semibold">
-                advanced insight
-              </span>{" "}
-              — so owners can make faster, better-informed decisions and spend
-              less time chasing spreadsheets.
-            </p>
-
-            {/* Bottom accent line */}
-            <div className="absolute bottom-0 left-0 h-[3px] w-0 bg-[#3ECDB0] group-hover:w-full transition-all duration-700 rounded-b-[20px]" />
-          </motion.div>
-
-          <motion.div
-            variants={fadeUp}
-            custom={0.15}
-            className="group relative bg-[#F8FAFC] text-[#1D4266] rounded-[20px] p-10 overflow-hidden
-                       border border-[#1D4266]/10
-                       hover:shadow-[0_20px_60px_rgba(47,174,147,0.18)] hover:border-[#3ECDB0]/35 transition-all duration-500"
-          >
-            {/* Glow blob */}
-            <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-[#3ECDB0]/10 rounded-full blur-3xl group-hover:bg-[#3ECDB0]/20 transition-colors duration-700" />
-
-            {/* Lottie animation */}
-            <div className="w-full h-48 mb-6 relative rounded-2xl overflow-hidden bg-white/5 flex items-center justify-center">
-              <div className="w-24 h-24 rounded-3xl bg-[color:var(--color-gold)]/15 border border-[color:var(--color-gold)]/25 flex items-center justify-center">
-                <Eye size={44} className="text-[color:var(--color-gold)]" />
+                {/* Tags */}
+                <div className="flex flex-wrap gap-2">
+                  {card.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="inline-flex items-center px-3.5 py-1.5 rounded-full font-mono text-[11px] tracking-wider uppercase"
+                      style={{
+                        background: card.tagBg,
+                        border: `1px solid ${card.tagBorder}`,
+                        color: card.tagColor,
+                      }}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </div>
 
-            {/* Icon */}
-            <div className="w-12 h-12 rounded-2xl bg-[color:var(--color-gold)]/15 flex items-center justify-center mb-8 relative">
-              <Eye size={22} className="text-[color:var(--color-gold)]" />
-            </div>
-
-            <span className="block font-mono text-[11.5px] tracking-[0.14em] uppercase text-[color:var(--color-gold)] mb-3 relative">
-              Our Vision
-            </span>
-
-            <h3 className="text-[clamp(20px,2.2vw,26px)] font-semibold font-[family-name:var(--font-space-grotesk)] leading-[1.2] mb-5 relative">
-              PNG&apos;s leading cloud bookkeeping partner.
-            </h3>
-
-            <p className="text-[#1D4266]/70 text-[15.5px] leading-relaxed mb-7 relative">
-              To be Papua New Guinea&apos;s leading cloud bookkeeping and
-              financial analytics partner — recognised for making modern
-              accounting technology accessible, affordable, and genuinely
-              useful for local businesses.
-            </p>
-
-            {/* Pill badges */}
-            <div className="flex flex-wrap gap-2 relative">
-              {["Partner", "Affordable", "Useful"].map((label) => (
-                <span
-                  key={label}
-                  className="inline-flex items-center px-3.5 py-1 rounded-full bg-[color:var(--color-teal)]/15 border border-[color:var(--color-teal)]/30 text-[color:var(--color-teal-2)] font-mono text-[11px] tracking-widest uppercase"
-                >
-                  {label}
-                </span>
-              ))}
-            </div>
-
-            {/* Bottom accent line */}
-            <div className="absolute bottom-0 left-0 h-[3px] w-0 bg-[color:var(--color-gold)] group-hover:w-full transition-all duration-700 rounded-b-[20px]" />
-          </motion.div>
+              {/* Bottom accent line on hover */}
+              <div
+                className="absolute bottom-0 left-0 h-[3px] w-0 group-hover:w-full transition-all duration-700 rounded-b-[22px]"
+                style={{ background: card.accentColor }}
+              />
+            </motion.div>
+          ))}
         </motion.div>
       </div>
     </section>

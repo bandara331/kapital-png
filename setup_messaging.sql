@@ -2,6 +2,7 @@
 create table admin_settings (
   id integer primary key default 1,
   admin_email text not null default 'daskapitalltd@gmail.com',
+  whatsapp_number text,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null,
   -- Ensure only one row ever exists
   constraint single_row check (id = 1)

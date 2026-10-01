@@ -65,10 +65,9 @@
     --section-alt:           #F0F4F8;   /* Very subtle off-white alt sections */
   }
 
-  body {
-    /* Lower global brightness to reduce eye strain from whites */
-    filter: brightness(0.82) contrast(1.04);
-  }
+  /* NOTE: Do NOT apply CSS filter to body — it creates a stacking context
+     that traps position:fixed portals (modals, dropdowns) inside it.
+     Eye-strain reduction is handled via the background-color token instead. */
 
   .dark {
     --background:            #F8F9FA;

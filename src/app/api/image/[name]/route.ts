@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 
-export async function GET(req: NextRequest, { params }: { params: { name: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ name: string }> }) {
   const { name } = await params;
   
   let filePath = "";

@@ -425,7 +425,7 @@ export function ClientImpressions() {
       : "—";
 
   return (
-    <section className="py-[104px] relative overflow-hidden">
+    <section className="py-16 relative overflow-hidden bg-[#F0F5F9]">
       {/* Background glow blobs */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-0 w-[500px] h-[400px] bg-[color:var(--color-teal)]/5 rounded-full blur-[100px]" />

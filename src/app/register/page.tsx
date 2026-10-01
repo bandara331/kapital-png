@@ -57,61 +57,61 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[color:var(--color-navy)] flex flex-col items-center justify-center p-4 relative overflow-hidden">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[color:var(--color-teal)]/5 rounded-full blur-[100px] pointer-events-none" />
+    <div className="min-h-screen bg-[#F0F4F8] flex flex-col items-center justify-center p-4 relative overflow-hidden">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#3ECDB0]/8 rounded-full blur-[100px] pointer-events-none" />
       
-      <Link href="/" className="absolute top-8 left-8 text-white/50 hover:text-white transition-colors font-mono text-sm">
+      <Link href="/" className="absolute top-8 left-8 text-[#5A7A9C] hover:text-[#1D4266] transition-colors font-mono text-sm">
         ← Back to Home
       </Link>
 
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-[420px] bg-[color:var(--card)] border border-[color:var(--border)] rounded-[24px] p-8 md:p-10 shadow-2xl relative z-10"
+        className="w-full max-w-[420px] bg-white border border-[#D9E4EE] rounded-[24px] p-8 md:p-10 shadow-lg relative z-10"
       >
         <div className="text-center mb-8">
-          <h1 className="font-[family-name:var(--font-space-grotesk)] text-3xl font-bold text-white mb-2">Create Account</h1>
-          <p className="text-white/50 text-sm">Get started with Kapital PNG analytics.</p>
+          <h1 className="font-[family-name:var(--font-space-grotesk)] text-3xl font-bold text-[#1D4266] mb-2">Create Account</h1>
+          <p className="text-[#5A7A9C] text-sm">Get started with Kapital PNG analytics.</p>
         </div>
 
         {error && (
-          <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-sm px-4 py-3 rounded-xl mb-6">
+          <div className="bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-xl mb-6">
             {error}
           </div>
         )}
 
         <form onSubmit={handleRegister} className="flex flex-col gap-5">
           <div className="flex flex-col gap-1.5">
-            <label className="text-[13px] font-medium text-white/80">Company Name</label>
+            <label className="text-[13px] font-medium text-[#1D4266]">Company Name</label>
             <input 
               type="text" 
               value={companyName}
               onChange={(e) => setCompanyName(e.target.value)}
-              className="bg-white/5 border border-white/10 focus:border-[color:var(--color-teal)] rounded-xl px-4 py-3 text-sm text-white outline-none transition-colors"
+              className="bg-[#F8F9FA] border border-[#D9E4EE] focus:border-[#3ECDB0] rounded-xl px-4 py-3 text-sm text-[#1D4266] outline-none transition-colors"
               placeholder="Your Business Ltd"
               required
             />
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-[13px] font-medium text-white/80">Email Address</label>
+            <label className="text-[13px] font-medium text-[#1D4266]">Email Address</label>
             <input 
               type="email" 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="bg-white/5 border border-white/10 focus:border-[color:var(--color-teal)] rounded-xl px-4 py-3 text-sm text-white outline-none transition-colors"
+              className="bg-[#F8F9FA] border border-[#D9E4EE] focus:border-[#3ECDB0] rounded-xl px-4 py-3 text-sm text-[#1D4266] outline-none transition-colors"
               placeholder="you@company.com"
               required
             />
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-[13px] font-medium text-white/80">Password</label>
+            <label className="text-[13px] font-medium text-[#1D4266]">Password</label>
             <input 
               type="password" 
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="bg-white/5 border border-white/10 focus:border-[color:var(--color-teal)] rounded-xl px-4 py-3 text-sm text-white outline-none transition-colors"
+              className="bg-[#F8F9FA] border border-[#D9E4EE] focus:border-[#3ECDB0] rounded-xl px-4 py-3 text-sm text-[#1D4266] outline-none transition-colors"
               placeholder="••••••••"
               minLength={6}
               required
@@ -121,14 +121,14 @@ export default function RegisterPage() {
           <button 
             type="submit" 
             disabled={isLoading}
-            className="mt-2 flex items-center justify-center gap-2 font-[family-name:var(--font-space-grotesk)] font-semibold text-[15px] px-6 py-3.5 rounded-xl transition-all duration-200 bg-white text-[color:var(--color-navy-3)] hover:bg-white/90 disabled:opacity-70 w-full"
+            className="mt-2 flex items-center justify-center gap-2 font-[family-name:var(--font-space-grotesk)] font-semibold text-[15px] px-6 py-3.5 rounded-xl transition-all duration-200 bg-[#3ECDB0] text-white hover:bg-[#2FBEA1] hover:shadow-[0_10px_24px_rgba(62,205,176,0.25)] disabled:opacity-70 w-full"
           >
             {isLoading ? <Loader2 size={18} className="animate-spin" /> : <><UserPlus size={18} /> Register</>}
           </button>
         </form>
 
-        <p className="text-center text-white/50 text-sm mt-8">
-          Already have an account? <Link href="/login" className="text-[color:var(--color-teal)] hover:text-[color:var(--color-teal-2)] transition-colors font-medium">Sign in</Link>
+        <p className="text-center text-[#5A7A9C] text-sm mt-8">
+          Already have an account? <Link href="/login" className="text-[#3ECDB0] hover:text-[#2FBEA1] transition-colors font-medium">Sign in</Link>
         </p>
       </motion.div>
     </div>

@@ -141,7 +141,7 @@ export function OcrScannerDemo() {
   };
 
   return (
-    <section className="py-[104px] md:py-[72px] overflow-hidden">
+    <section className="py-16 md:py-14 overflow-hidden bg-[#E9EFF5]">
       <div className="wrap">
         <motion.div
           variants={revealVariants}
@@ -151,13 +151,13 @@ export function OcrScannerDemo() {
           className="max-w-[640px] mb-[48px]"
         >
           <p className="flex items-center gap-[10px] font-mono text-[12.5px] tracking-[0.14em] uppercase text-[#1C8E76] mb-[18px] before:content-[''] before:w-[22px] before:h-[1px] before:bg-[color:var(--color-teal)] before:inline-block">
-            AI-Aided Automation
+            Smart Automation
           </p>
           <h2 className="text-[clamp(28px,3.4vw,38px)] leading-[1.15] font-semibold font-[family-name:var(--font-space-grotesk)]">
             Scan. Extract. Automate.
           </h2>
           <p className="text-[color:var(--muted)] text-[16.5px] mt-[14px]">
-            Our AI instantly extracts line items, taxes, and vendor details from your invoices and receipts — powered by Groq's ultra-fast Llama 3 model — and logs them directly into Xero.
+            Our system instantly extracts line items, taxes, and vendor details from your invoices and receipts and logs them directly into Xero.
           </p>
         </motion.div>
 
@@ -205,7 +205,7 @@ export function OcrScannerDemo() {
                       <h3 className="font-[family-name:var(--font-space-grotesk)] font-semibold text-[18px] mb-[8px]">
                         {isDragging ? "Drop receipt now" : "Drop a receipt to scan"}
                       </h3>
-                      <p className="text-[14px] text-[color:var(--muted)] mb-[24px]">or click "Test Scan" to see Groq AI in action</p>
+                      <p className="text-[14px] text-[color:var(--muted)] mb-[24px]">or click "Test Scan" to see the scanner in action</p>
                       <button 
                         onClick={handleTestScan}
                         className="pointer-events-auto inline-flex items-center gap-2 font-[family-name:var(--font-space-grotesk)] font-semibold text-[14.5px] px-[22px] py-[10px] rounded-full transition-all duration-200 bg-[color:var(--color-teal)] text-[color:var(--color-navy-3)] hover:-translate-y-[2px] shadow-[0_4px_14px_rgba(47,174,147,0.25)]"
@@ -311,7 +311,7 @@ export function OcrScannerDemo() {
                     className="flex flex-col items-center justify-center text-[color:var(--muted)] text-center h-full border border-dashed border-[color:var(--color-teal)]/40 dark:border-[color:var(--color-teal)]/20 rounded-[16px] p-[30px]"
                   >
                     <FileText size={40} className="text-[color:var(--color-teal)]/40 mb-[16px]" />
-                    <p className="font-mono text-[13px] uppercase tracking-wider text-[color:var(--color-teal)]">Sending to Groq AI...</p>
+                    <p className="font-mono text-[13px] uppercase tracking-wider text-[color:var(--color-teal)]">Processing...</p>
                     <p className="text-[12px] mt-2 text-[color:var(--muted)] animate-pulse">Extracting fields with Llama 3...</p>
                   </motion.div>
                 )}

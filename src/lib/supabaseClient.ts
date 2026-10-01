@@ -1,16 +1,16 @@
 import { createBrowserClient } from '@supabase/ssr';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables. Please check your .env.local file.');
-}
-
 // Each browser tab/window gets its own isolated client instance.
 // This prevents session bleed between different logged-in users.
 function createClient() {
-  return createBrowserClient(supabaseUrl!, supabaseAnonKey!);
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error('Missing Supabase environment variables. Please check your .env.local file.');
+  }
+
+  return createBrowserClient(supabaseUrl, supabaseAnonKey);
 }
 
 // Singleton per browser window — uses window-scoped storage so
@@ -18,7 +18,7 @@ function createClient() {
 // own independent session stored in their own localStorage.
 let _client: ReturnType<typeof createBrowserClient> | null = null;
 
-export const supabase = (() => {
+export function getSupabaseClient() {
   if (typeof window === 'undefined') {
     // Server-side: always create fresh (no singleton)
     return createClient();
@@ -28,4 +28,13 @@ export const supabase = (() => {
     _client = createClient();
   }
   return _client;
-})();
+}
+
+// Backward-compatible named export — resolved lazily at call-site, not at
+// module evaluation time, so SSG prerendering won't throw when env vars
+// are absent from the build environment.
+export const supabase = new Proxy({} as ReturnType<typeof createBrowserClient>, {
+  get(_target, prop) {
+    return (getSupabaseClient() as any)[prop];
+  },
+});

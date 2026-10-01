@@ -114,7 +114,7 @@ export function DashboardDemo() {
   };
 
   return (
-    <section className="py-[104px] md:py-[72px] overflow-hidden">
+    <section className="py-16 md:py-14 overflow-hidden bg-[#F0F5F9]">
       <div className="wrap">
         <motion.div 
           variants={revealVariants}
@@ -124,7 +124,7 @@ export function DashboardDemo() {
           className="max-w-[640px] mb-[48px]"
         >
           <p className="flex items-center gap-[10px] font-mono text-[12.5px] tracking-[0.14em] uppercase text-[#1C8E76] mb-[18px] before:content-[''] before:w-[22px] before:h-[1px] before:bg-[color:var(--color-teal)] before:inline-block">
-            AI-Aided Analytics
+            Advanced Analytics
           </p>
           <h2 className="text-[clamp(28px,3.4vw,38px)] leading-[1.15] font-semibold font-[family-name:var(--font-space-grotesk)]">
             Your numbers, visualized.

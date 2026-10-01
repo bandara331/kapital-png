@@ -278,7 +278,7 @@ export function ServiceDetailView({
           {/* Background image */}
           <Image
             src="/mission_banner.png"
-            alt="Our Mission — AI-aided financial insight for PNG businesses"
+            alt="Our Mission — Financial insight for PNG businesses"
             fill
             className="object-cover object-center"
             priority={false}
@@ -317,7 +317,7 @@ export function ServiceDetailView({
             >
               To empower Papua New Guinea businesses, including SMEs, with
               accurate, real-time, cloud-based financial information and{" "}
-              <strong className="text-white font-semibold">AI-aided insight</strong>{" "}
+              <strong className="text-white font-semibold">advanced insight</strong>{" "}
               — so owners can make faster, better-informed decisions and spend
               less time chasing spreadsheets.
             </motion.p>

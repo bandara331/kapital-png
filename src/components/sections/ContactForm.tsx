@@ -91,11 +91,11 @@ export function ContactForm() {
   };
 
   return (
-    <section id="contact" className="py-[104px] md:py-[72px] bg-[color:var(--color-navy)] text-white relative overflow-hidden">
+    <section id="contact" className="py-16 md:py-14 bg-[#F0F5F9] relative overflow-hidden">
       {/* Background styling */}
-      <svg className="absolute inset-0 opacity-[0.08] pointer-events-none w-full h-full object-cover" viewBox="0 0 1200 500" preserveAspectRatio="none">
-        <path d="M-50,120 C200,60 350,180 600,110 C850,40 1000,150 1250,90" stroke="var(--color-teal-2)" strokeWidth="1" fill="none"/>
-        <path d="M-50,280 C240,230 400,330 640,270 C880,200 1020,300 1250,250" stroke="var(--color-teal-2)" strokeWidth="1" fill="none"/>
+      <svg className="absolute inset-0 opacity-[0.06] pointer-events-none w-full h-full object-cover" viewBox="0 0 1200 500" preserveAspectRatio="none">
+        <path d="M-50,120 C200,60 350,180 600,110 C850,40 1000,150 1250,90" stroke="#3ECDB0" strokeWidth="1" fill="none"/>
+        <path d="M-50,280 C240,230 400,330 640,270 C880,200 1020,300 1250,250" stroke="#3ECDB0" strokeWidth="1" fill="none"/>
       </svg>
       
       <div className="wrap relative z-10 grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-[48px] items-start">
@@ -107,24 +107,24 @@ export function ContactForm() {
           whileInView="visible"
           viewport={{ once: true, amount: 0.15 }}
         >
-          <p className="flex items-center gap-[10px] font-mono text-[12.5px] tracking-[0.14em] uppercase text-[color:var(--color-teal)] mb-[18px] before:content-[''] before:w-[22px] before:h-[1px] before:bg-[color:var(--color-teal)] before:inline-block">
+          <p className="flex items-center gap-[10px] font-mono text-[12.5px] tracking-[0.14em] uppercase text-[#3ECDB0] mb-[18px] before:content-[''] before:w-[22px] before:h-[1px] before:bg-[#3ECDB0] before:inline-block">
             Get In Touch
           </p>
-          <h2 className="text-[clamp(28px,3.4vw,40px)] leading-[1.12] font-semibold font-[family-name:var(--font-space-grotesk)] mb-[24px]">
+          <h2 className="text-[clamp(28px,3.4vw,40px)] leading-[1.12] font-semibold font-[family-name:var(--font-space-grotesk)] text-[#1D4266] mb-[24px]">
             Ready to upgrade your bookkeeping?
           </h2>
-          <p className="text-white/70 text-[16px] mb-[40px] max-w-[420px]">
+          <p className="text-[#5A7A9C] text-[16px] mb-[40px] max-w-[420px]">
             Leave us a message, and our team in Port Moresby will get back to you within 24 hours.
           </p>
 
           <div className="space-y-[24px]">
             <div className="flex items-start gap-[16px]">
-              <div className="w-[42px] h-[42px] rounded-full bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0">
+              <div className="w-[42px] h-[42px] rounded-full bg-[#3ECDB0]/10 border border-[#3ECDB0]/20 flex items-center justify-center flex-shrink-0">
                 <MapPin size={20} className="text-[color:var(--color-teal-2)]" />
               </div>
               <div>
-                <h4 className="font-[family-name:var(--font-space-grotesk)] font-semibold text-[16px] mb-[4px]">Location</h4>
-                <p className="text-white/60 text-[14px] leading-relaxed">
+                <h4 className="font-[family-name:var(--font-space-grotesk)] font-semibold text-[16px] text-[#1D4266] mb-[4px]">Location</h4>
+                <p className="text-[#5A7A9C] text-[14px] leading-relaxed">
                   A trading division of Das Kapital Limited<br />
                   P.O. Box 414, Vision City<br />
                   Waigani, Port Moresby, PNG
@@ -133,24 +133,26 @@ export function ContactForm() {
             </div>
 
             <div className="flex items-start gap-[16px]">
-              <div className="w-[42px] h-[42px] rounded-full bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0">
-                <Mail size={20} className="text-[color:var(--color-teal-2)]" />
+              <div className="w-[42px] h-[42px] rounded-full bg-[#3ECDB0]/10 border border-[#3ECDB0]/20 flex items-center justify-center flex-shrink-0">
+                <Mail size={20} className="text-[#3ECDB0]" />
               </div>
               <div>
-                <h4 className="font-[family-name:var(--font-space-grotesk)] font-semibold text-[16px] mb-[4px]">Email</h4>
-                <a href="mailto:daskapitalltd@gmail.com" className="text-white/60 text-[14px] hover:text-[color:var(--color-teal-2)] transition-colors">daskapitalltd@gmail.com</a>
+                <h4 className="font-[family-name:var(--font-space-grotesk)] font-semibold text-[16px] text-[#1D4266] mb-[4px]">Email</h4>
+                <a href="mailto:daskapitalltd@gmail.com" className="text-[#5A7A9C] text-[14px] hover:text-[#3ECDB0] transition-colors">daskapitalltd@gmail.com</a>
               </div>
             </div>
 
             <div className="flex items-start gap-[16px]">
-              <div className="w-[42px] h-[42px] rounded-full bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0">
-                <Phone size={20} className="text-[color:var(--color-teal-2)]" />
+              <div className="w-[42px] h-[42px] rounded-full bg-[#3ECDB0]/10 border border-[#3ECDB0]/20 flex items-center justify-center flex-shrink-0">
+                <Phone size={20} className="text-[#3ECDB0]" />
               </div>
               <div>
-                <h4 className="font-[family-name:var(--font-space-grotesk)] font-semibold text-[16px] mb-[4px]">Phone</h4>
-                <div className="text-white/60 text-[14px] flex flex-col gap-1">
-                  <a href="tel:+67581504134" className="hover:text-[color:var(--color-teal-2)] transition-colors">+675 8150 4134</a>
-                  <a href="tel:+67575388212" className="hover:text-[color:var(--color-teal-2)] transition-colors">+675 75388212</a>
+                <h4 className="font-[family-name:var(--font-space-grotesk)] font-semibold text-[16px] text-[#1D4266] mb-[4px]">Phone</h4>
+                <div className="text-[#5A7A9C] text-[14px] flex flex-col gap-1">
+                  <a href="tel:+67581504134" className="hover:text-[#3ECDB0] transition-colors">+675 8150 4134</a>
+                  <a href="https://wa.me/67575388212" target="_blank" rel="noopener noreferrer" className="hover:text-[#3ECDB0] transition-colors flex items-center gap-1.5">
+                    +675 75388212 <span className="text-[11px] bg-[#25D366]/20 text-[#25D366] px-1.5 py-0.5 rounded-full font-mono">WhatsApp</span>
+                  </a>
                 </div>
               </div>
             </div>
@@ -163,19 +165,19 @@ export function ContactForm() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.15 }}
-          className="bg-white/5 border border-white/10 rounded-[24px] p-[32px] md:p-[40px] relative overflow-hidden"
+          className="bg-white border border-[#D9E4EE] rounded-[24px] p-[32px] md:p-[40px] relative overflow-hidden shadow-sm"
         >
           {isSuccess ? (
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="absolute inset-0 bg-[color:var(--color-navy)] flex flex-col items-center justify-center p-[40px] text-center z-20"
+              className="absolute inset-0 bg-white flex flex-col items-center justify-center p-[40px] text-center z-20"
             >
-              <div className="w-[64px] h-[64px] rounded-full bg-[color:var(--color-teal)]/20 flex items-center justify-center mb-[24px]">
-                <CheckCircle2 size={32} className="text-[color:var(--color-teal-2)]" />
+              <div className="w-[64px] h-[64px] rounded-full bg-[#3ECDB0]/15 flex items-center justify-center mb-[24px]">
+                <CheckCircle2 size={32} className="text-[#3ECDB0]" />
               </div>
-              <h3 className="font-[family-name:var(--font-space-grotesk)] font-semibold text-[24px] mb-[12px]">Message Sent Successfully</h3>
-              <p className="text-white/60 text-[15px]">
+              <h3 className="font-[family-name:var(--font-space-grotesk)] font-semibold text-[24px] text-[#1D4266] mb-[12px]">Message Sent Successfully</h3>
+              <p className="text-[#5A7A9C] text-[15px]">
                 Thank you for reaching out. A member of the Kapital PNG team will be in touch shortly.
               </p>
             </motion.div>
@@ -191,54 +193,54 @@ export function ContactForm() {
           <form onSubmit={handleSubmit} className="flex flex-col gap-[20px] relative z-10">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-[20px]">
               <div className="flex flex-col gap-[6px]">
-                <label htmlFor="name" className="text-[13px] font-medium text-white/80">Full Name</label>
+                <label htmlFor="name" className="text-[13px] font-medium text-[#1D4266]">Full Name</label>
                 <input 
                   type="text" 
                   id="name"
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  className={`bg-white/5 border ${errors.name ? 'border-red-400' : 'border-white/10 focus:border-[color:var(--color-teal)]'} rounded-[12px] px-[16px] py-[12px] text-[14px] text-white outline-none transition-colors`}
+                  className={`bg-[#F8F9FA] border ${errors.name ? 'border-red-400' : 'border-[#D9E4EE] focus:border-[#3ECDB0]'} rounded-[12px] px-[16px] py-[12px] text-[14px] text-[#1D4266] outline-none transition-colors`}
                   placeholder="John Doe"
                 />
-                {errors.name && <span className="text-red-400 text-[12px]">{errors.name}</span>}
+                {errors.name && <span className="text-red-500 text-[12px]">{errors.name}</span>}
               </div>
               <div className="flex flex-col gap-[6px]">
-                <label htmlFor="email" className="text-[13px] font-medium text-white/80">Email Address</label>
+                <label htmlFor="email" className="text-[13px] font-medium text-[#1D4266]">Email Address</label>
                 <input 
                   type="email" 
                   id="email"
                   value={formData.email}
                   onChange={(e) => setFormData({...formData, email: e.target.value})}
-                  className={`bg-white/5 border ${errors.email ? 'border-red-400' : 'border-white/10 focus:border-[color:var(--color-teal)]'} rounded-[12px] px-[16px] py-[12px] text-[14px] text-white outline-none transition-colors`}
+                  className={`bg-[#F8F9FA] border ${errors.email ? 'border-red-400' : 'border-[#D9E4EE] focus:border-[#3ECDB0]'} rounded-[12px] px-[16px] py-[12px] text-[14px] text-[#1D4266] outline-none transition-colors`}
                   placeholder="john@example.com"
                 />
-                {errors.email && <span className="text-red-400 text-[12px]">{errors.email}</span>}
+                {errors.email && <span className="text-red-500 text-[12px]">{errors.email}</span>}
               </div>
             </div>
 
             <div className="flex flex-col gap-[6px]">
-              <label htmlFor="company" className="text-[13px] font-medium text-white/80">Company Name (Optional)</label>
+              <label htmlFor="company" className="text-[13px] font-medium text-[#1D4266]">Company Name (Optional)</label>
               <input 
                 type="text" 
                 id="company"
                 value={formData.company}
                 onChange={(e) => setFormData({...formData, company: e.target.value})}
-                className="bg-white/5 border border-white/10 focus:border-[color:var(--color-teal)] rounded-[12px] px-[16px] py-[12px] text-[14px] text-white outline-none transition-colors"
+                className="bg-[#F8F9FA] border border-[#D9E4EE] focus:border-[#3ECDB0] rounded-[12px] px-[16px] py-[12px] text-[14px] text-[#1D4266] outline-none transition-colors"
                 placeholder="Your Business Ltd"
               />
             </div>
 
             <div className="flex flex-col gap-[6px]">
-              <label htmlFor="message" className="text-[13px] font-medium text-white/80">How can we help?</label>
+              <label htmlFor="message" className="text-[13px] font-medium text-[#1D4266]">How can we help?</label>
               <textarea 
                 id="message"
                 value={formData.message}
                 onChange={(e) => setFormData({...formData, message: e.target.value})}
                 rows={4}
-                className={`bg-white/5 border ${errors.message ? 'border-red-400' : 'border-white/10 focus:border-[color:var(--color-teal)]'} rounded-[12px] px-[16px] py-[12px] text-[14px] text-white outline-none transition-colors resize-none`}
+                className={`bg-[#F8F9FA] border ${errors.message ? 'border-red-400' : 'border-[#D9E4EE] focus:border-[#3ECDB0]'} rounded-[12px] px-[16px] py-[12px] text-[14px] text-[#1D4266] outline-none transition-colors resize-none`}
                 placeholder="Tell us about your current bookkeeping setup..."
               />
-              {errors.message && <span className="text-red-400 text-[12px]">{errors.message}</span>}
+              {errors.message && <span className="text-red-500 text-[12px]">{errors.message}</span>}
             </div>
 
             <button 

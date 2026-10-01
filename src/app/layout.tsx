@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/ThemeProvider";
 import { BookingModalProvider } from "@/context/BookingModalContext";
 import { Navbar } from "@/components/ui/Navbar";
 import { Footer } from "@/components/ui/Footer";
-import { AiChatbot } from "@/components/ui/AiChatbot";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -27,7 +25,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Kapital PNG — Cloud Bookkeeping & AI-Aided Analytics",
+  title: "Kapital PNG — Cloud Bookkeeping & Analytics",
   description: "Smarter numbers. Stronger business. Built for Papua New Guinea.",
 };
 
@@ -41,19 +39,11 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${spaceGrotesk.variable} ${ibmPlexMono.variable} antialiased`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <BookingModalProvider>
-            <Navbar />
-            {children}
-            <Footer />
-            <AiChatbot />
-          </BookingModalProvider>
-        </ThemeProvider>
+        <BookingModalProvider>
+          <Navbar />
+          {children}
+          <Footer />
+        </BookingModalProvider>
       </body>
     </html>
   );

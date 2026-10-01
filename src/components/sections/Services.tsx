@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowDown, Check, Zap, Target, Shield, Clock } from "lucide-react";
+import { ArrowDown, Check, Zap, Target, Shield, Clock, FileCheck, LineChart, Settings2, Compass } from "lucide-react";
 import Link from "next/link";
 
 const revealVariants = {
@@ -19,13 +19,13 @@ const serviceData = {
     tiers: [
       {
         name: "Essential",
-        price: "From $299/mo",
+        price: "From K299/mo",
         features: ["Monthly Reconciliation", "Up to 100 Transactions", "Basic Xero Subscription", "Quarterly Tax Prep"],
         popular: false
       },
       {
         name: "Growth",
-        price: "From $599/mo",
+        price: "From K599/mo",
         features: ["Weekly Reconciliation", "Unlimited Transactions", "Premium Xero + Hubdoc", "Payroll for up to 5", "Priority Email Support"],
         popular: true
       },
@@ -37,25 +37,25 @@ const serviceData = {
       }
     ],
     process: [
-      { step: "01", title: "Audit & Clean", desc: "We review your historical data and fix any existing errors." },
-      { step: "02", title: "Automate", desc: "We connect bank feeds and OCR tools to remove manual entry." },
-      { step: "03", title: "Maintain", desc: "We keep your books flawless on a rolling basis." }
+      { step: "01", title: "Automate", desc: "We connect bank feeds and OCR tools to remove manual entry." },
+      { step: "02", title: "Maintain", desc: "We keep your books flawless on a rolling basis." },
+      { step: "03", title: "Review & Clean", desc: "We review your historical data and fix any existing errors." }
     ]
   },
   analytics: {
-    title: "AI-Aided Analytics",
+    title: "Analytics",
     subtitle: "Turn raw transactions into clear, actionable, predictive insights.",
     tiers: [
       {
         name: "Insights",
-        price: "From $499/mo",
+        price: "From K499/mo",
         features: ["Monthly Dashboard", "Key Metric Tracking", "Cash Flow Snapshot", "Basic Variance Analysis"],
         popular: false
       },
       {
         name: "Predictive",
-        price: "From $899/mo",
-        features: ["Live Interactive Dashboards", "AI Cash Flow Forecasting", "Automated Anomaly Alerts", "Monthly Strategy Call"],
+        price: "From K899/mo",
+        features: ["Live Interactive Dashboards", "Cash Flow Forecasting", "Automated Anomaly Alerts", "Monthly Strategy Call"],
         popular: true
       },
       {
@@ -67,7 +67,7 @@ const serviceData = {
     ],
     process: [
       { step: "01", title: "Connect", desc: "We securely pipe your Xero data into our analytics engine." },
-      { step: "02", title: "Model", desc: "Our AI builds a custom predictive model of your business." },
+      { step: "02", title: "Model", desc: "We build a custom predictive model of your business." },
       { step: "03", title: "Report", desc: "You receive stunning, actionable dashboards every month." }
     ]
   },
@@ -77,13 +77,13 @@ const serviceData = {
     tiers: [
       {
         name: "Quick Start",
-        price: "$1,500 once",
+        price: "K1,500 once",
         features: ["Xero Account Creation", "Chart of Accounts Design", "Bank Feed Connections", "Basic Invoice Templates"],
         popular: false
       },
       {
         name: "Ecosystem",
-        price: "$3,500 once",
+        price: "K3,500 once",
         features: ["Everything in Quick Start", "Inventory App Integration", "Payroll System Setup", "Historical Data Migration", "Staff Training Session"],
         popular: true
       },
@@ -106,13 +106,13 @@ const serviceData = {
     tiers: [
       {
         name: "Quarterly",
-        price: "$900 /qtr",
+        price: "K900 /qtr",
         features: ["Quarterly Strategy Session", "Tax Planning Review", "High-Level Budgeting", "Compliance Check"],
         popular: false
       },
       {
         name: "Virtual CFO",
-        price: "From $2,000/mo",
+        price: "From K2,000/mo",
         features: ["Monthly Deep-Dive Meeting", "Rolling 12-Month Forecast", "Capital Raising Prep", "Unlimited Email Support", "Board Meeting Attendance"],
         popular: true
       },
@@ -164,8 +164,8 @@ export function Services() {
   };
 
   return (
-    <section id="services" className="py-[104px] md:py-[72px] relative">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[800px] bg-[color:var(--color-teal)]/5 rounded-full blur-[120px] pointer-events-none -z-10" />
+    <section id="services" className="py-16 md:py-14 flex-1 relative bg-[#F0F5F9]">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[800px] bg-[#3ECDB0]/10 rounded-full blur-[120px] pointer-events-none -z-10" />
       
       <div className="wrap">
         <motion.div 
@@ -173,26 +173,26 @@ export function Services() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.15 }}
-          className="max-w-[640px] mb-[52px]"
+          className="max-w-[640px] mb-10"
         >
-          <p className="flex items-center gap-[10px] font-mono text-[12.5px] tracking-[0.14em] uppercase text-[#1C8E76] mb-[18px] before:content-[''] before:w-[22px] before:h-[1px] before:bg-[color:var(--color-teal)] before:inline-block">
+          <p className="flex items-center gap-[10px] font-mono text-[12.5px] tracking-[0.14em] uppercase text-[#3ECDB0] mb-[18px] before:content-[''] before:w-[22px] before:h-[1px] before:bg-[#3ECDB0] before:inline-block">
             What We Do
           </p>
-          <h2 className="text-[clamp(28px,3.4vw,38px)] leading-[1.15] font-semibold font-[family-name:var(--font-space-grotesk)]">
+          <h2 className="text-[clamp(28px,3.4vw,38px)] leading-[1.15] font-semibold font-[family-name:var(--font-space-grotesk)] text-[#1D4266]">
             A focused suite, built around Xero.
           </h2>
-          <p className="text-[color:var(--muted)] text-[16.5px] mt-[14px]">
+          <p className="text-[#1D4266]/70 text-[16.5px] mt-[14px]">
             Click on any service below to explore our practical pricing tiers and step-by-step implementation process.
           </p>
         </motion.div>
         
-        {/* Service Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[20px] mb-8">
+        {/* Service Cards Grid - Premium Redesign */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
           {[
-            { id: "bookkeeping", num: "01", title: "Bookkeeping", icon: <Check size={24} /> },
-            { id: "analytics", num: "02", title: "Analytics", icon: <Zap size={24} /> },
-            { id: "setup", num: "03", title: "System Setup", icon: <Target size={24} /> },
-            { id: "advisory", num: "04", title: "Advisory", icon: <Shield size={24} /> },
+            { id: "bookkeeping", num: "01", title: "Bookkeeping", desc: "Automated & Accurate", icon: <FileCheck size={28} /> },
+            { id: "analytics", num: "02", title: "Analytics", desc: "Advanced Insights", icon: <LineChart size={28} /> },
+            { id: "setup", num: "03", title: "System Setup", desc: "Seamless Migration", icon: <Settings2 size={28} /> },
+            { id: "advisory", num: "04", title: "Advisory", desc: "Strategic CFO Guidance", icon: <Compass size={28} /> },
           ].map((service) => (
             <motion.button 
               key={service.id}
@@ -202,27 +202,48 @@ export function Services() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.15 }}
-              className={`h-full text-left bg-[color:var(--card)] border rounded-[14px] p-[24px] transition-all duration-300 relative overflow-hidden group ${
+              className={`text-left border rounded-[20px] p-5 transition-all duration-500 relative overflow-hidden group min-h-[160px] flex flex-col justify-between ${
                 activeService === service.id 
-                  ? "border-[color:var(--color-teal)] shadow-[0_0_30px_rgba(28,142,118,0.2)] -translate-y-2" 
-                  : "border-[color:var(--border)] hover:border-[color:var(--color-teal)]/50 hover:-translate-y-1"
+                  ? "bg-white border-[#3ECDB0] shadow-[0_8px_30px_rgba(62,205,176,0.15)] -translate-y-1" 
+                  : "bg-white border-[#1D4266]/10 hover:bg-[#F8FAFC] hover:border-[#3ECDB0]/40 hover:-translate-y-0.5"
               }`}
             >
-              <div className={`absolute top-0 left-0 w-full h-1 transition-colors ${activeService === service.id ? "bg-[color:var(--color-teal)]" : "bg-transparent group-hover:bg-[color:var(--color-teal)]/30"}`} />
+              {/* Subtle hover gradient */}
+              <div className="absolute inset-0 bg-gradient-to-br from-[#3ECDB0]/0 to-[#3ECDB0]/0 group-hover:from-[#3ECDB0]/5 transition-all duration-500" />
               
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-6 transition-colors ${
-                activeService === service.id ? "bg-[color:var(--color-teal)]/20 text-[color:var(--color-teal)]" : "bg-white/5 text-white/50 group-hover:text-white"
-              }`}>
-                {service.icon}
+              {/* Top Section */}
+              <div className="relative z-10 flex items-start justify-between w-full">
+                {/* Number Badge */}
+                <span className={`font-mono text-[11px] tracking-[0.14em] px-3 py-1 rounded-full border transition-colors ${
+                  activeService === service.id ? "bg-[#3ECDB0]/20 border-[#3ECDB0]/30 text-[#3ECDB0]" : "bg-[#1D4266]/5 border-[#1D4266]/10 text-[#1D4266]/40 group-hover:bg-[#3ECDB0]/10 group-hover:text-[#3ECDB0] group-hover:border-[#3ECDB0]/20"
+                }`}>
+                  {service.num}
+                </span>
+
+                {/* Arrow Icon */}
+                <div className={`transition-all duration-500 ${
+                  activeService === service.id ? "rotate-180 text-[#3ECDB0]" : "text-[#1D4266]/20 group-hover:text-[#3ECDB0] group-hover:translate-y-1"
+                }`}>
+                  <ArrowDown size={20} />
+                </div>
               </div>
 
-              <span className="block font-mono text-[12px] text-[color:var(--color-teal)] tracking-[.08em] mb-2">{service.num}</span>
-              <h3 className={`text-[18px] font-semibold font-[family-name:var(--font-space-grotesk)] transition-colors ${activeService === service.id ? "text-white" : "text-white/80 group-hover:text-white"}`}>
-                {service.title}
-              </h3>
-              
-              <div className={`absolute bottom-6 right-6 transition-all duration-300 ${activeService === service.id ? "opacity-100 text-[color:var(--color-teal)]" : "opacity-0 group-hover:opacity-100 text-white/30"}`}>
-                <ArrowDown size={20} className={activeService === service.id ? "rotate-180 transition-transform duration-500" : "animate-bounce"} />
+              <div className="relative z-10 mt-6">
+                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-5 transition-colors shadow-inner ${
+                  activeService === service.id ? "bg-[#3ECDB0] text-white" : "bg-white text-[#3ECDB0] group-hover:bg-[#3ECDB0]/10 border border-[#1D4266]/10 group-hover:border-[#3ECDB0]/20"
+                }`}>
+                  {service.icon}
+                </div>
+                <h3 className={`text-[19px] font-bold font-[family-name:var(--font-space-grotesk)] transition-colors mb-1.5 ${
+                  activeService === service.id ? "text-[#1D4266]" : "text-[#1D4266]/90 group-hover:text-[#1D4266]"
+                }`}>
+                  {service.title}
+                </h3>
+                <p className={`text-[13.5px] transition-colors leading-snug ${
+                  activeService === service.id ? "text-[#1D4266]/70" : "text-[#1D4266]/60 group-hover:text-[#1D4266]/80"
+                }`}>
+                  {service.desc}
+                </p>
               </div>
             </motion.button>
           ))}
@@ -240,30 +261,30 @@ export function Services() {
               transition={{ duration: 0.5, ease: "easeInOut" }}
               className="overflow-hidden"
             >
-              <div className="bg-[#F3F8FF] dark:bg-[#032D60] border border-[#E5E7EB] dark:border-white/10 rounded-[24px] p-8 md:p-12 relative overflow-hidden">
+              <div className="bg-white border border-[#1D4266]/10 rounded-[24px] p-8 md:p-12 relative overflow-hidden shadow-sm">
                 
                 <div className="text-center max-w-2xl mx-auto mb-16">
-                  <h3 className="text-[clamp(32px,4vw,48px)] font-bold font-[family-name:var(--font-space-grotesk)] text-[#032D60] dark:text-white mb-4">
+                  <h3 className="text-[clamp(32px,4vw,48px)] font-bold font-[family-name:var(--font-space-grotesk)] text-[#1D4266] mb-4">
                     {serviceData[activeService].title}
                   </h3>
-                  <p className="text-[16px] text-[#54698D] dark:text-white/70">
+                  <p className="text-[16px] text-[#1D4266]/70">
                     {serviceData[activeService].subtitle}
                   </p>
                 </div>
 
                 {/* Workflow Timeline */}
                 <div className="mb-20">
-                  <h4 className="text-[12px] font-mono text-[#0176D3] tracking-[0.12em] uppercase mb-10 text-center font-semibold">How We Execute</h4>
+                  <h4 className="text-[12px] font-mono text-[#3ECDB0] tracking-[0.12em] uppercase mb-10 text-center font-semibold">How We Execute</h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-                    <div className="hidden md:block absolute top-8 left-[15%] right-[15%] h-[1px] bg-[#E5E7EB] dark:bg-white/10 border-t border-dashed border-[#0176D3]/30" />
+                    <div className="hidden md:block absolute top-8 left-[15%] right-[15%] h-[1px] bg-[#1D4266]/10 border-t border-dashed border-[#3ECDB0]/30" />
                     
                     {serviceData[activeService].process.map((step, i) => (
-                      <div key={i} className="relative z-10 bg-white dark:bg-[#021F45] border border-[#E5E7EB] dark:border-white/10 rounded-2xl p-8 text-center shadow-sm hover:shadow-md transition-shadow">
-                        <div className="w-16 h-16 rounded-full bg-[#EEF4FF] dark:bg-[#0176D3]/20 border-2 border-[#0176D3] flex items-center justify-center mx-auto mb-6 text-[18px] font-bold font-mono text-[#0176D3]">
+                      <div key={i} className="relative z-10 bg-[#F8FAFC] border border-[#1D4266]/10 rounded-2xl p-8 text-center shadow-sm hover:shadow-md transition-shadow">
+                        <div className="w-16 h-16 rounded-full bg-[#E8FAF7] border-2 border-[#3ECDB0] flex items-center justify-center mx-auto mb-6 text-[18px] font-bold font-mono text-[#3ECDB0]">
                           {step.step}
                         </div>
-                        <h5 className="text-[18px] font-bold text-[#032D60] dark:text-white mb-3">{step.title}</h5>
-                        <p className="text-[14px] text-[#54698D] dark:text-white/60 leading-relaxed">{step.desc}</p>
+                        <h5 className="text-[18px] font-bold text-[#1D4266] mb-3">{step.title}</h5>
+                        <p className="text-[14px] text-[#1D4266]/60 leading-relaxed">{step.desc}</p>
                       </div>
                     ))}
                   </div>
@@ -271,27 +292,27 @@ export function Services() {
 
                 {/* Pricing Tiers */}
                 <div>
-                  <h4 className="text-[12px] font-mono text-[#0176D3] tracking-[0.12em] uppercase mb-10 text-center font-semibold">Transparent Pricing</h4>
+                  <h4 className="text-[12px] font-mono text-[#3ECDB0] tracking-[0.12em] uppercase mb-10 text-center font-semibold">Transparent Pricing</h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch">
                     {serviceData[activeService].tiers.map((tier, i) => (
-                      <div key={i} className={`bg-white dark:bg-[#021F45] rounded-3xl p-8 flex flex-col relative transition-all duration-300 ${
+                      <div key={i} className={`bg-[#F8FAFC] rounded-3xl p-8 flex flex-col relative transition-all duration-300 ${
                         tier.popular 
-                          ? "border-2 border-[#0176D3] shadow-[0_16px_40px_rgba(1,118,211,0.12)] md:-mt-4 md:mb-4" 
-                          : "border border-[#E5E7EB] dark:border-white/10"
+                          ? "border-2 border-[#3ECDB0] shadow-[0_16px_40px_rgba(62,205,176,0.12)] md:-mt-4 md:mb-4 bg-white" 
+                          : "border border-[#1D4266]/10"
                       }`}>
                         {tier.popular && (
-                          <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[#0176D3] text-white text-[11px] font-bold px-4 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
+                          <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[#3ECDB0] text-white text-[11px] font-bold px-4 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
                             Most Popular
                           </div>
                         )}
-                        <h5 className="text-[18px] font-semibold text-[#032D60] dark:text-white mb-2">{tier.name}</h5>
-                        <div className="text-[32px] font-bold font-[family-name:var(--font-space-grotesk)] text-[#032D60] dark:text-white mb-8">
+                        <h5 className="text-[18px] font-semibold text-[#1D4266] mb-2">{tier.name}</h5>
+                        <div className="text-[32px] font-bold font-[family-name:var(--font-space-grotesk)] text-[#1D4266] mb-8">
                           {tier.price}
                         </div>
                         <ul className="space-y-4 mb-10 flex-1">
                           {tier.features.map((feat, j) => (
-                            <li key={j} className="flex gap-3 text-[14.5px] text-[#54698D] dark:text-white/70 leading-snug">
-                              <Check size={18} className="text-[#0176D3] shrink-0" />
+                            <li key={j} className="flex gap-3 text-[14.5px] text-[#1D4266]/70 leading-snug">
+                              <Check size={18} className="text-[#3ECDB0] shrink-0" />
                               {feat}
                             </li>
                           ))}
@@ -300,8 +321,8 @@ export function Services() {
                           href="/#contact"
                           className={`w-full py-3.5 rounded-full font-[family-name:var(--font-space-grotesk)] font-semibold text-[14.5px] transition-all duration-200 flex items-center justify-center ${
                             tier.popular 
-                              ? "bg-[#0176D3] text-white hover:bg-[#1B96FF] hover:-translate-y-[1px] hover:shadow-[0_6px_20px_rgba(1,118,211,0.35)]" 
-                              : "bg-[#EEF4FF] dark:bg-white/5 text-[#0176D3] dark:text-white hover:bg-[#0176D3] hover:text-white"
+                              ? "bg-[#3ECDB0] text-white hover:bg-[#2FBEA1] hover:-translate-y-[1px] hover:shadow-[0_6px_20px_rgba(62,205,176,0.35)]" 
+                              : "bg-[#E8FAF7] text-[#3ECDB0] hover:bg-[#3ECDB0] hover:text-white"
                           }`}
                         >
                           Select Plan

@@ -76,10 +76,10 @@ export default function AdminDashboardPage() {
     // Subscribe to new reviews
     const reviewsSub = supabase
       .channel('public:reviews')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'reviews' }, (payload: any) => {
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'reviews' }, (payload: { new: Review }) => {
         setReviews(prev => [payload.new as Review, ...prev]);
       })
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'reviews' }, (payload: any) => {
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'reviews' }, (payload: { new: Review }) => {
         // Remove from pending list if approved
         if (payload.new.approved) {
           setReviews(prev => prev.filter(r => r.id !== payload.new.id));
@@ -90,7 +90,7 @@ export default function AdminDashboardPage() {
     // Subscribe to new clients
     const clientsSub = supabase
       .channel('public:clients')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'clients' }, (payload: any) => {
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'clients' }, (payload: { eventType: string; new: Client }) => {
         if (payload.eventType === 'INSERT') {
           setClients(prev => [payload.new as Client, ...prev]);
         }
@@ -100,7 +100,7 @@ export default function AdminDashboardPage() {
     // Subscribe to settings updates
     const settingsSub = supabase
       .channel('public:admin_settings')
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'admin_settings' }, (payload: any) => {
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'admin_settings' }, (payload: { new: { admin_email?: string; whatsapp_number?: string } }) => {
         setNotifyEmail(payload.new.admin_email || "");
         setWhatsappNumber(payload.new.whatsapp_number || "");
       })
